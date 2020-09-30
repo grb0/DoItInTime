@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/search"
+        android:title="@string/search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="ifRoom" />
+
+
+    <item
+        android:id="@+id/to_dos_overflow"
+        android:icon="@drawable/ic_overflow"
+        android:title="@string/overflow"
+        app:showAsAction="always">
+
+        <menu>
+            <item
+                android:id="@+id/show"
+                android:icon="@drawable/ic_show"
+                android:title="@string/show">
+
+                <menu>
+                    <item
+                        android:id="@+id/show_active"
+                        android:icon="@drawable/ic_status_active"
+                        android:title="@string/active" />
+
+                    <item
+                        android:id="@+id/show_completed"
+                        android:icon="@drawable/ic_status_completed"
+                        android:title="@string/completed" />
+
+                    <item
+                        android:id="@+id/show_on_hold"
+                        android:icon="@drawable/ic_status_on_hold"
+                        android:title="@string/on_hold" />
+
+                    <item
+                        android:id="@+id/show_all"
+                        android:icon="@drawable/ic_status_all"
+                        android:title="@string/all" />
+                </menu>
+            </item>
+
+            <item
+                android:id="@+id/sort"
+                android:icon="@drawable/ic_sort"
+                android:title="@string/sort">
+
+                <menu>
+                    <item
+                        android:id="@+id/status"
+                        android:icon="@drawable/ic_show"
+                        android:title="@string/by_status">
+
+                        <menu>
+                            <item
+                                android:id="@+id/sort_active"
+                                android:icon="@drawable/ic_status_active"
+                                android:title="@string/active" />
+
+                            <item
+                                android:id="@+id/sort_completed"
+                                android:icon="@drawable/ic_status_completed"
+                                android:title="@string/completed" />
+
+                            <item
+                                android:id="@+id/sort_on_hold"
+                                android:icon="@drawable/ic_status_on_hold"
+                                android:title="@string/on_hold" />
+                        </menu>
+                    </item>
+
+                    <item
+                        android:id="@+id/priority"
+                        android:icon="@drawable/ic_priority_generic"
+                        android:title="@string/by_priority">
+
+                        <menu>
+                            <item
+                                android:id="@+id/high_priority"
+                                android:icon="@drawable/ic_priority_high"
+                                android:title="@string/high_priority" />
+
+                            <item
+                                android:id="@+id/low_priority"
+                                android:icon="@drawable/ic_priority_low"
+                                android:title="@string/low_priority" />
+                        </menu>
+                    </item>
+                    <item
+                        android:id="@+id/alphabetically"
+                        android:icon="@drawable/ic_alphabetically"
+                        android:title="@string/alphabetically">
+
+                        <menu>
+                            <item
+                                android:id="@+id/ascending"
+                                android:icon="@drawable/ic_alphabetically_ascending"
+                                android:title="@string/ascending" />
+
+                            <item
+                                android:id="@+id/descending"
+                                android:icon="@drawable/ic_alphabetically_descending"
+                                android:title="@string/descending" />
+                        </menu>
+                    </item>
+                </menu>
+            </item>
+
+            <item
+                android:id="@+id/delete_all"
+                android:icon="@drawable/ic_delete_all"
+                android:title="@string/delete_all" />
+        </menu>
+    </item>
+</menu>

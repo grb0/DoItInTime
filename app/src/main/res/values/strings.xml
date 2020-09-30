@@ -1,3 +1,54 @@
 <resources>
-    <string name="app_name">DoItInTime</string>
+    <string name="app_name">Do It In Time</string>
+
+    <string name="add_new_to_do">Add a new To-Do</string>
+    <string name="all_done">All done. Good job!</string>
+    <string name="to_dos">To-Dos</string>
+    <string name="add_to_do">Add a To-Do</string>
+    <string name="update_to_do">Update the To-Do</string>
+    <string name="title_hint">Title</string>
+    <string name="paper_holder">Paper holder</string>
+    <string name="title_empty">Title empty</string>
+    <string name="title_too_long">Title too long</string>
+    <string name="important_sign">Important sign</string>
+    <string name="priority_hint">Priority</string>
+    <string name="description_hint">Description</string>
+    <string name="search">Search</string>
+    <string name="sort">Sort</string>
+    <string name="high_priority">High</string>
+    <string name="low_priority">Low</string>
+    <string name="delete_all">Delete all</string>
+    <string name="overflow">Overflow</string>
+    <string name="by_priority">By priority</string>
+    <string name="alphabetically">Alphabetically</string>
+    <string name="ascending">Ascending</string>
+    <string name="descending">Descending</string>
+    <string name="confirm_update">Save</string>
+    <string name="confirm_add">Add</string>
+    <string name="delete">Delete</string>
+    <string name="show">Show</string>
+    <string name="active">Active</string>
+    <string name="completed">Completed</string>
+    <string name="by_status">By status</string>
+    <string name="all">All</string>
+    <string name="on_hold">On hold</string>
+    <string name="status_hint">Status</string>
+    <string name="black_circle">Black circle</string>
+
+    <string name="invalid_fields_error_title">Wooops!</string>
+    <string name="invalid_fields_error_message">Something went wrong, check all fields and try again.</string>
+    <string name="invalid_fields_error_button_text">Understood</string>
+
+    <string name="database_error_title">Wooops!</string>
+    <string name="database_error_message">Something went wrong, please try again, if error persists, restart the app.</string>
+    <string name="database_error_button_text">OK</string>
+
+    <string name="unknown_error_title">Wooops!</string>
+    <string name="unknown_error_message">Something went wrong, please try again, if error
+        persists, restart the app. If that does not help, re-install the app. Sorry for any
+    inconvinience caused.</string>
+    <string name="unknown_error_button_text">Feels bad :(</string>
+
+    <string name="title_too_long_message">Title is still too long :)</string>
+
 </resources>

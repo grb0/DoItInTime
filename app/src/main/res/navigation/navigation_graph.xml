@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/navigation_graph"
+            app:startDestination="@id/toDosFragment">
+
+    <fragment
+        android:id="@+id/toDosFragment"
+        android:name="ba.grbo.doitintime.ui.fragments.ToDosFragment"
+        android:label="@string/to_dos"
+        tools:layout="@layout/fragment_to_dos" >
+        <action
+            android:id="@+id/action_toDosFragment_to_addToDoFragment"
+            app:destination="@id/addToDoFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_toDosFragment_to_updateToDoFragment"
+            app:destination="@id/updateToDoFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/addToDoFragment"
+        android:name="ba.grbo.doitintime.ui.fragments.AddToDoFragment"
+        android:label="@string/add_to_do"
+        tools:layout="@layout/fragment_add_or_update_to_do" />
+    <fragment
+        android:id="@+id/updateToDoFragment"
+        android:name="ba.grbo.doitintime.ui.fragments.UpdateToDoFragment"
+        android:label="@string/update_to_do"
+        tools:layout="@layout/fragment_add_or_update_to_do" />
+</navigation>
