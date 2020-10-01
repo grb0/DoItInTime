@@ -16,6 +16,7 @@
     <string name="search">Search</string>
     <string name="sort">Sort</string>
     <string name="high_priority">High</string>
+    <string name="medium_priority">Medium</string>
     <string name="low_priority">Low</string>
     <string name="delete_all">Delete all</string>
     <string name="overflow">Overflow</string>
@@ -30,10 +31,9 @@
     <string name="active">Active</string>
     <string name="completed">Completed</string>
     <string name="by_status">By status</string>
-    <string name="all">All</string>
     <string name="on_hold">On hold</string>
     <string name="status_hint">Status</string>
-    <string name="black_circle">Black circle</string>
+    <string name="circle">Circle</string>
 
     <string name="invalid_fields_error_title">Wooops!</string>
     <string name="invalid_fields_error_message">Something went wrong, check all fields and try again.</string>
@@ -50,5 +50,8 @@
     <string name="unknown_error_button_text">Feels bad :(</string>
 
     <string name="title_too_long_message">Title is still too long :)</string>
+    <string name="new_task">New task</string>
+    <string name="task">Task</string>
+
 
 </resources>

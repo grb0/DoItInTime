@@ -1,22 +1,18 @@
 package ba.grbo.doitintime.data.source.local
 
 import androidx.room.Dao
-import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import ba.grbo.doitintime.data.ToDo
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ToDoDao {
-    @Insert
-    suspend fun insert(toDo: ToDo)
+    @Transaction
+    @Query("SELECT * FROM infos_table WHERE id = :infoId")
+    fun observe(infoId: Int): Flow<ToDo>
 
-    @Query("SELECT COUNT(*) FROM to_dos_table")
-    fun observeCountAll(): Flow<Int>
-
-    @Query("SELECT * FROM to_dos_table WHERE id = :id")
-    fun observe(id: Int): Flow<ToDo>
-
-    @Query("SELECT * FROM to_dos_table ORDER BY id ASC")
+    @Transaction
+    @Query("SELECT * FROM infos_table ORDER BY id DESC")
     fun observeAll(): Flow<List<ToDo>>
 }

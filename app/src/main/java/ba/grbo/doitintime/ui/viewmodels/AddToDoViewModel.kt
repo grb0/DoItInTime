@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ba.grbo.doitintime.R
+import ba.grbo.doitintime.data.Info
 import ba.grbo.doitintime.data.Priority
 import ba.grbo.doitintime.data.Result.Error
 import ba.grbo.doitintime.data.Result.Success
@@ -25,8 +26,20 @@ class AddToDoViewModel @ViewModelInject constructor(
 
     val title: MutableLiveData<String> = MutableLiveData()
     val priority: MutableLiveData<Priority> = MutableLiveData()
-    val description: MutableLiveData<String> = MutableLiveData()
     val status: MutableLiveData<Status> = MutableLiveData()
+
+    val info = Info(title, priority, status)
+
+    val toDo = ToDo(info, emptyList())
+
+//    val toDo = repository.observeToDo(1)
+//        .asLiveData()
+//        .map {
+//            when (it) {
+//                is Success -> it.data
+//                is Error -> null // inform the user of error
+//            }
+//        }
 
     private val _titleEvent = MutableLiveData<Event<@StringRes Int>>()
     val titleEvent: LiveData<Event<Int>>
@@ -59,12 +72,11 @@ class AddToDoViewModel @ViewModelInject constructor(
         if (areFieldsValid()) {
             viewModelScope.launch(Dispatchers.IO) {
                 try {
-                    repository.insertTodo(
-                        ToDo(
-                            title.value!!,
-                            priority.value!!,
-                            description.value!!,
-                            status.value!!
+                    repository.insertInfo(
+                        Info(
+                            title,
+                            priority,
+                            status
                         )
                     ).apply {
                         when (this) {

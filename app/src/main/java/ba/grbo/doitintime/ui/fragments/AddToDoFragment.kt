@@ -13,14 +13,11 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import ba.grbo.doitintime.R
-import ba.grbo.doitintime.data.Priority
-import ba.grbo.doitintime.data.Status
 import ba.grbo.doitintime.databinding.FragmentAddOrUpdateToDoBinding
 import ba.grbo.doitintime.ui.viewmodels.AddToDoViewModel
 import ba.grbo.doitintime.utilities.EventObserver
 import ba.grbo.doitintime.utilities.MaterialSpinnerAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
@@ -94,66 +91,53 @@ class AddToDoFragment : Fragment() {
         setupTitleEditText()
         setupPriorityDropdownMenu()
         setStatusDropdownMenu()
-        setDescriptionEditText()
     }
 
     private fun setupTitleEditText() {
-        setupEditText(
-            binding.titleEditText,
-            binding.descriptionEditText,
-            true,
-            ::observeTitleLength
-        )
+//        setupEditText(
+//            binding.titleEditText,
+//            ::observeTitleLength
+//        )
     }
 
     private fun setupPriorityDropdownMenu() {
-        setupDropdownMenu(
-            listOf(Priority.High.name, Priority.Medium.name, Priority.Low.name),
-            listOf(
-                R.drawable.ic_priority_high,
-                R.drawable.ic_priority_medium,
-                R.drawable.ic_priority_low
-            ),
-            "priority",
-            binding.priorityDropdownMenu,
-            binding.priorityLayout
-        )
+//        setupDropdownMenu(
+//            listOf(Priority.High.name, Priority.Medium.name, Priority.Low.name),
+//            listOf(
+//                R.drawable.ic_priority_high,
+//                R.drawable.ic_priority_medium,
+//                R.drawable.ic_priority_low
+//            ),
+//            "priority",
+//            binding.priorityDropdownMenu,
+//            binding.priorityLayout
+//        )
     }
 
     private fun setStatusDropdownMenu() {
-        setupDropdownMenu(
-            listOf(Status.Active.identifier, Status.Completed.identifier, Status.OnHold.identifier),
-            listOf(
-                R.drawable.ic_status_active,
-                R.drawable.ic_status_completed,
-                R.drawable.ic_status_on_hold
-            ),
-            "status",
-            binding.statusDropdownMenu,
-            binding.statusLayout
-        )
+//        setupDropdownMenu(
+//            listOf(Status.Active.identifier, Status.Completed.identifier, Status.OnHold.identifier),
+//            listOf(
+//                R.drawable.ic_status_active,
+//                R.drawable.ic_status_completed,
+//                R.drawable.ic_status_on_hold
+//            ),
+//            "status",
+//            binding.statusDropdownMenu,
+//            binding.statusLayout
+//        )
     }
-
-    private fun setDescriptionEditText() {
-        setupEditText(
-            binding.descriptionEditText,
-            binding.titleEditText
-        )
-    }
-
 
     private fun setupEditText(
         primaryEditText: TextInputEditText,
-        secondayEditText: TextInputEditText,
-        observePrimaryEditTextTextChange: Boolean = false,
-        observePrimaryEditTextLength: (Int) -> Unit = {}
+        observePrimaryEditTextLength: (Int) -> Unit
     ) {
         primaryEditText.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) showKeyboard(v)
-            if (!hasFocus && !secondayEditText.hasFocus()) hideKeyboard()
+            else hideKeyboard()
         }
 
-        if (observePrimaryEditTextTextChange) primaryEditText.doOnTextChanged { text, _, _, _ ->
+        primaryEditText.doOnTextChanged { text, _, _, _ ->
             text?.run { observePrimaryEditTextLength(length) }
         }
 
@@ -239,7 +223,7 @@ class AddToDoFragment : Fragment() {
     }
 
     private fun showSnackbar(@StringRes message: Int) {
-        Snackbar.make(binding.addToDoConstraintLayout, message, Snackbar.LENGTH_LONG).show()
+//        Snackbar.make(binding.addToDoConstraintLayout, message, Snackbar.LENGTH_LONG).show()
     }
 
     private fun showDialog(
@@ -258,7 +242,7 @@ class AddToDoFragment : Fragment() {
 
     private fun hideKeyboard() {
         (requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-            .hideSoftInputFromWindow(binding.addToDoConstraintLayout.windowToken, 0)
+//            .hideSoftInputFromWindow(binding.addToDoConstraintLayout.windowToken, 0)
     }
 
     private fun showKeyboard(view: View) {
@@ -275,19 +259,18 @@ class AddToDoFragment : Fragment() {
     }
 
     private fun showTitleWarning(@StringRes message: Int) {
-        binding.titleLayout.error = getString(message)
+//        binding.titleLayout.error = getString(message)
     }
 
     private fun hideTitleWarning() {
-        binding.titleLayout.error = null
+//        binding.titleLayout.error = null
     }
 
     private fun setEnabled() {
         binding.run {
-            titleEditText.isEnabled = true
-            priorityDropdownMenu.isEnabled = true
-            statusDropdownMenu.isEnabled = true
-            descriptionEditText.isEnabled = true
+//            titleEditText.isEnabled = true
+//            priorityDropdownMenu.isEnabled = true
+//            statusDropdownMenu.isEnabled = true
             wasEnabled = true
         }
     }

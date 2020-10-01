@@ -12,7 +12,6 @@ import androidx.navigation.fragment.findNavController
 import ba.grbo.doitintime.R
 import ba.grbo.doitintime.databinding.FragmentToDosBinding
 import ba.grbo.doitintime.ui.viewmodels.ToDosViewModel
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -90,13 +89,13 @@ class ToDosFragment : Fragment() {
     }
 
     private fun ToDosViewModel.observeToDosCount() {
-        toDosCount.observe(viewLifecycleOwner) {
-            Snackbar.make(
-                binding.toDosCoordinatorLayout,
-                "Todo successfully added",
-                Snackbar.LENGTH_LONG
-            ).show()
-        }
+//        toDosCount.observe(viewLifecycleOwner) {
+//            Snackbar.make(
+//                binding.toDosCoordinatorLayout,
+//                "Todo successfully added",
+//                Snackbar.LENGTH_LONG
+//            ).show()
+//        }
     }
 
     private fun setEnabled(state: Boolean) {

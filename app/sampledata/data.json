@@ -1,0 +1,51 @@
+{
+  "title_info": [
+    {
+      "title": "Today",
+      "title_hint": "",
+      "priority_text": "Hi...",
+      "priority_image": "@drawable/ic_priority_high",
+      "status_image": "@drawable/ic_status_active",
+      "status_text": "Active"
+    }
+  ],
+  "tasks": [
+    {
+      "description": "Study Android Programming and visit mum",
+      "priority": "@drawable/ic_priority_high",
+      "status": "@drawable/ic_status_active"
+    },
+    {
+      "description": "Read Quran",
+      "priority": "@drawable/ic_priority_high",
+      "status": "@drawable/ic_status_active"
+    },
+    {
+      "description": "Take a break and go out",
+      "priority": "@drawable/ic_priority_low",
+      "status": "@drawable/ic_status_on_hold"
+    },
+    {
+      "description": "Help those in need",
+      "priority": "@drawable/ic_priority_medium",
+      "status": "@drawable/ic_status_completed"
+    }
+  ],
+  "types": [
+    {
+      "type": 0
+    },
+    {
+      "type": 1
+    },
+    {
+      "type": 1
+    },
+    {
+      "type": 1
+    },
+    {
+      "type": 1
+    }
+  ]
+}
