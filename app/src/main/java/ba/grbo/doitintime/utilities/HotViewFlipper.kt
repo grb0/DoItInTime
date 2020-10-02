@@ -1,3 +1,5 @@
+package ba.grbo.doitintime.utilities
+
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.ViewFlipper

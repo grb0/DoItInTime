@@ -10,14 +10,20 @@
             name="toDo"
             type="ba.grbo.doitintime.data.ToDo" />
 
+        <variable
+            name="adapter"
+            type="ba.grbo.doitintime.ui.adapters.ToDoAdapter" />
+
     </data>
 
     <LinearLayout
+        android:id="@+id/add_or_update_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <include
             layout="@layout/to_do_item"
+            app:adapter="@{adapter}"
             app:toDo="@{toDo}" />
     </LinearLayout>
 

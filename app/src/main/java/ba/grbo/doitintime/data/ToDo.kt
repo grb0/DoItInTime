@@ -8,5 +8,5 @@ data class ToDo(
     val info: Info,
 
     @Relation(parentColumn = "id", entityColumn = "infoId")
-    val task: List<Task>
+    val tasks: List<Task>
 )

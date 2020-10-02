@@ -8,10 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ba.grbo.doitintime.R
 import ba.grbo.doitintime.data.Info
-import ba.grbo.doitintime.data.Priority
 import ba.grbo.doitintime.data.Result.Error
 import ba.grbo.doitintime.data.Result.Success
-import ba.grbo.doitintime.data.Status
 import ba.grbo.doitintime.data.ToDo
 import ba.grbo.doitintime.data.source.ToDosRepository
 import ba.grbo.doitintime.utilities.Event
@@ -25,10 +23,8 @@ class AddToDoViewModel @ViewModelInject constructor(
     private var wasTitleWarningCleaned = false
 
     val title: MutableLiveData<String> = MutableLiveData()
-    val priority: MutableLiveData<Priority> = MutableLiveData()
-    val status: MutableLiveData<Status> = MutableLiveData()
 
-    val info = Info(title, priority, status)
+    val info = Info(title)
 
     val toDo = ToDo(info, emptyList())
 
@@ -41,9 +37,13 @@ class AddToDoViewModel @ViewModelInject constructor(
 //            }
 //        }
 
-    private val _titleEvent = MutableLiveData<Event<@StringRes Int>>()
-    val titleEvent: LiveData<Event<Int>>
-        get() = _titleEvent
+    private val _viewsEnabled = MutableLiveData(false)
+    val viewsEnabled: LiveData<Boolean>
+        get() = _viewsEnabled
+
+    private val _titleErrorMessage = MutableLiveData<@StringRes Int>()
+    val titleWarningMessage: LiveData<Int>
+        get() = _titleErrorMessage
 
     private val _titleStillTooLongEvent = MutableLiveData<Event<@StringRes Int>>()
     val titleStillTooLongEvent: LiveData<Event<Int>>
@@ -72,23 +72,22 @@ class AddToDoViewModel @ViewModelInject constructor(
         if (areFieldsValid()) {
             viewModelScope.launch(Dispatchers.IO) {
                 try {
-                    repository.insertInfo(
-                        Info(
-                            title,
-                            priority,
-                            status
-                        )
-                    ).apply {
-                        when (this) {
-                            is Success -> {
-                                withContext(Dispatchers.Main) {
-                                    proceedToToDosFragment()
+                    val insertInfoStatus = repository.insertInfo(toDo.info)
+                    if (insertInfoStatus is Success && toDo.tasks.isNotEmpty()) {
+                        repository.insertTasks(toDo.tasks).apply {
+                            when (this) {
+                                is Success -> {
+                                    withContext(Dispatchers.Main) { proceedToToDosFragment() }
+                                }
+                                is Error -> {
+                                    withContext(Dispatchers.Main) { informUserOfDatabaseError() }
                                 }
                             }
-                            is Error -> {
-                                withContext(Dispatchers.Main) { informUserOfDatabaseError() }
-                            }
                         }
+                    } else if (insertInfoStatus is Success) {
+                        withContext(Dispatchers.Main) { proceedToToDosFragment() }
+                    } else {
+                        withContext(Dispatchers.Main) { informUserOfDatabaseError() }
                     }
                 } catch (e: NullPointerException) {
                     withContext(Dispatchers.Main) { informUserOfInvalidFieldsError() }
@@ -104,18 +103,22 @@ class AddToDoViewModel @ViewModelInject constructor(
         else if (!wasTitleWarningCleaned) cleanTitleWarning()
     }
 
+    fun onAnimationEnd() {
+        _viewsEnabled.value = true
+    }
+
     private fun proceedToToDosFragment() {
         _proceedToToDosFragmentEvent.value = Event(Unit)
     }
 
     private fun informUserOfTitleBeingTooLong() {
-        _titleEvent.value = Event(R.string.title_too_long)
+        _titleErrorMessage.value = R.string.title_too_long
         wasTitleWarningCleaned = false
     }
 
 
     private fun cleanTitleWarning() {
-        _titleEvent.value = null
+        _titleErrorMessage.value = null
         wasTitleWarningCleaned = true
     }
 
@@ -154,7 +157,7 @@ class AddToDoViewModel @ViewModelInject constructor(
     }
 
     private fun informUserOfTitleBeingEmpty() {
-        _titleEvent.value = Event(R.string.title_empty)
+        _titleErrorMessage.value = R.string.title_empty
         wasTitleWarningCleaned = false
     }
 

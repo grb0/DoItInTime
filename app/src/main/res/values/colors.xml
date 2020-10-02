@@ -8,6 +8,8 @@
     <color name="red">#FF0000</color>
     <color name="blue">#0000FF</color>
     <color name="green">#00FF00</color>
+    <color name="light_gray">#E0E0E0</color>
+    <color name="lighter_gray">#ECECEC</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
 </resources>
