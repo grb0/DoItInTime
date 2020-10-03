@@ -35,4 +35,14 @@ data class Task(
         priority,
         status
     )
+
+//    override fun equals(other: Any?): Boolean {
+//        return when (other) {
+//            null,
+//            !is Task -> false
+//            else -> id == other.id &&
+//                    infoId == other.infoId &&
+//                    description == other.description &&
+//        }
+//    }
 }

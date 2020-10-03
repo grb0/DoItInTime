@@ -39,10 +39,10 @@ class AddToDoFragment : Fragment() {
                 ::showKeyboard,
                 ::hideKeyboard
             )
-//            toDo = addToDoViewModel.toDo
+            toDo = addToDoViewModel.toDo
         }
 
-//        addToDoViewModel.addObservers()
+        addToDoViewModel.addObservers()
         setHasOptionsMenu(true)
 
         return binding.root
@@ -92,10 +92,10 @@ class AddToDoFragment : Fragment() {
 //                ::showKeyboard,
 //                ::hideKeyboard
 //            )
-            toDo = addToDoViewModel.toDo
+//            toDo = addToDoViewModel.toDo
         }
 
-        addToDoViewModel.addObservers()
+//        addToDoViewModel.addObservers()
     }
 
     private fun AddToDoViewModel.addObservers() {

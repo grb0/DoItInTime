@@ -52,6 +52,7 @@
     <string name="title_too_long_message">Title is still too long :)</string>
     <string name="new_task">New task</string>
     <string name="task">Task</string>
+    <string name="expand_collapse">Expand/Collapse</string>
 
 
 </resources>

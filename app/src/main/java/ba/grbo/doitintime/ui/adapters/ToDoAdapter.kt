@@ -50,24 +50,48 @@ class ToDoAdapter @Inject constructor(
                 val inflater = LayoutInflater.from(parent.context)
                 val binding = InfoItemBinding.inflate(inflater, parent, false).apply {
                     lifecycleOwner = viewLifecyleOwner
-                    setupTitleEditText(
+                    setupViews(
                         titleEditText,
+                        priorityDropdownMenu,
+                        statusDropdownMenu,
+                        priorityLayout,
+                        statusLayout,
                         observeEditTextLength,
                         showKeyboard,
-                        hideKeyboard
-                    )
-                    setupPriorityDropdownMenu(
-                        priorityDropdownMenu,
-                        priorityLayout,
-                        context
-                    )
-                    setupStatusDropdownMenu(
-                        statusDropdownMenu,
-                        statusLayout,
+                        hideKeyboard,
                         context
                     )
                 }
                 return InfoViewHolder(binding)
+            }
+
+            private fun setupViews(
+                titleEditText: TextInputEditText,
+                priorityDropdownMenu: AutoCompleteTextView,
+                statusDropdownMenu: AutoCompleteTextView,
+                priorityLayout: TextInputLayout,
+                statusLayout: TextInputLayout,
+                observeEditTextLength: (Int) -> Unit,
+                showKeyboard: (View) -> Unit,
+                hideKeyboard: () -> Unit,
+                context: Context
+            ) {
+                setupTitleEditText(
+                    titleEditText,
+                    observeEditTextLength,
+                    showKeyboard,
+                    hideKeyboard
+                )
+                setupPriorityDropdownMenu(
+                    priorityDropdownMenu,
+                    priorityLayout,
+                    context
+                )
+                setupStatusDropdownMenu(
+                    statusDropdownMenu,
+                    statusLayout,
+                    context
+                )
             }
 
             private fun setupPriorityDropdownMenu(
@@ -122,10 +146,10 @@ class ToDoAdapter @Inject constructor(
                 showKeyboard: (View) -> Unit,
                 hideKeyboard: () -> Unit
             ) {
-                editText.setOnFocusChangeListener { v, hasFocus ->
-                    if (hasFocus) showKeyboard(v)
-                    else hideKeyboard()
-                }
+//                editText.setOnFocusChangeListener { v, hasFocus ->
+//                    if (hasFocus) showKeyboard(v)
+//                    else hideKeyboard()
+//                }
 
                 editText.doOnTextChanged { text, _, _, _ ->
                     text?.run { observeEditTextLength(length) }
@@ -235,16 +259,16 @@ class ToDoAdapter @Inject constructor(
         is Item.InfoItem -> INFO
     }
 
-    fun cancelJob() {
-        job.cancel()
-    }
-
-    fun wrapDataAndSubmitList(toDo: ToDo) {
+    fun wrapToDoAndSubmitList(toDo: ToDo) {
         adapterScope.launch {
             val data = if (toDo.tasks.isEmpty()) listOf(Item.InfoItem(toDo.info))
             else listOf(Item.InfoItem(toDo.info)) + toDo.tasks.map { Item.TaskItem(it) }
 
             withContext(Dispatchers.Main) { submitList(data) }
         }
+    }
+
+    fun cancelJob() {
+        job.cancel()
     }
 }

@@ -10,7 +10,7 @@ import com.google.android.material.textfield.TextInputLayout
 
 @BindingAdapter("toDo")
 fun RecyclerView.bindToDo(toDo: ToDo?) {
-    toDo?.let { (adapter as ToDoAdapter).wrapDataAndSubmitList(it) }
+    toDo?.let { (adapter as ToDoAdapter).wrapToDoAndSubmitList(it) }
 
 }
 
@@ -23,5 +23,3 @@ fun RecyclerView.bindAdapter(adapter: ToDoAdapter?) {
 fun TextInputLayout.bindErrorMessage(@StringRes warningMessage: Int?, context: Context) {
     error = if (warningMessage != null) context.getString(warningMessage) else null
 }
-
-//fun AutoCompleteTextView.bindText()
