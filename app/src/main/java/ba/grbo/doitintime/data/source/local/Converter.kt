@@ -1,21 +1,39 @@
 package ba.grbo.doitintime.data.source.local
 
-import androidx.databinding.InverseMethod
+import androidx.lifecycle.MutableLiveData
+import androidx.room.TypeConverter
 import ba.grbo.doitintime.data.Priority
 import ba.grbo.doitintime.data.Status
 
-object Converter {
-    @InverseMethod("stringToPriority")
-    @JvmStatic
-    fun priorityToString(priority: Priority?): String? = priority?.name
 
-    @JvmStatic
-    fun stringToPriority(priority: String?): Priority? = priority?.let { Priority.valueOf(it) }
+class Converter {
+    @TypeConverter
+    fun mLDTitleToString(title: MutableLiveData<String>) = title.value
 
-    @InverseMethod("stringToStatus")
-    @JvmStatic
-    fun statusToString(status: Status?): String? = status?.identifier
+    @TypeConverter
+    fun stringToMLDTitle(title: String) = MutableLiveData(title)
 
-    @JvmStatic
-    fun stringToStatus(status: String?): Status? = status?.let { Status.valueOf(identifier = it) }
+    @TypeConverter
+    fun mLDPriorityToPriority(priority: MutableLiveData<Priority>) = priority.value
+
+    @TypeConverter
+    fun priorityToMLDPriority(priority: Priority) = MutableLiveData(priority)
+
+    @TypeConverter
+    fun priorityToString(priority: Priority) = priority.name
+
+    @TypeConverter
+    fun stringToPriority(priority: String) = Priority.valueOf(priority)
+
+    @TypeConverter
+    fun mLDStatusToStatus(status: MutableLiveData<Status>) = status.value
+
+    @TypeConverter
+    fun statusToMLDStatus(status: Status) = MutableLiveData(status)
+
+    @TypeConverter
+    fun statusToString(status: Status) = status.name
+
+    @TypeConverter
+    fun stringToStatus(status: String) = Status.valueOf(identifier = status)
 }

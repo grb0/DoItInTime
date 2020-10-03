@@ -33,11 +33,6 @@ class ToDoAdapter @Inject constructor(
     private val showKeyboard: (View) -> Unit,
     private val hideKeyboard: () -> Unit
 ) : ListAdapter<Item, RecyclerView.ViewHolder>(ItemDiffCallbacks()) {
-    companion object {
-        private const val INFO = 0
-        private const val TASK = 1
-    }
-
     private val job = Job()
     private val adapterScope = CoroutineScope(Dispatchers.Default + job)
 
@@ -198,6 +193,11 @@ class ToDoAdapter @Inject constructor(
             binding.task = task
             binding.executePendingBindings()
         }
+    }
+
+    companion object {
+        private const val INFO = 0
+        private const val TASK = 1
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {

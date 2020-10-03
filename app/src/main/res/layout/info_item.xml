@@ -18,7 +18,7 @@
             name="viewsEnabled"
             type="androidx.lifecycle.LiveData&lt;Boolean&gt;" />
 
-        <import type="ba.grbo.doitintime.data.source.local.Converter" />
+        <import type="ba.grbo.doitintime.utilities.Converter" />
         <import type="android.text.InputType" />
 
     </data>

@@ -9,7 +9,7 @@ import ba.grbo.doitintime.data.Info
 import ba.grbo.doitintime.data.Task
 
 @Database(entities = [Info::class, Task::class], version = 1, exportSchema = false)
-@TypeConverters(Converters::class)
+@TypeConverters(Converter::class)
 abstract class ToDosDatabase : RoomDatabase() {
     abstract val toDoDao: ToDoDao
     abstract val infoDao: InfoDao
