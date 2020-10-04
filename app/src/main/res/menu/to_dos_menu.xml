@@ -86,8 +86,8 @@
 
                             <item
                                 android:id="@+id/medium_priority"
-                                android:icon="@drawable/ic_priority_medium"
-                                android:title="@string/medium_priority" />
+                                android:icon="@drawable/ic_priority_normal"
+                                android:title="@string/normal_priority" />
 
                             <item
                                 android:id="@+id/low_priority"

@@ -3,7 +3,7 @@
     {
       "title": "Today",
       "title_hint": "",
-      "priority_text": "Hi...",
+      "priority_text": "High",
       "priority_image": "@drawable/ic_priority_high",
       "status_image": "@drawable/ic_status_active",
       "status_text": "Active"

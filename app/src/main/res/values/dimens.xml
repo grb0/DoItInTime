@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="card_collapsed">0dp</dimen>
+    <dimen name="card_expanded">6dp</dimen>
+</resources>

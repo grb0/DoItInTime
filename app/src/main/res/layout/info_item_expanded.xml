@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="info"
             type="ba.grbo.doitintime.data.Info" />
@@ -17,29 +18,19 @@
             name="viewsEnabled"
             type="androidx.lifecycle.LiveData&lt;Boolean&gt;" />
 
+        <variable
+            name="cursorPosition"
+            type="androidx.lifecycle.MutableLiveData&lt;Integer&gt;" />
+
         <import type="ba.grbo.doitintime.utilities.Converter" />
 
         <import type="android.text.InputType" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/todo_informations_constraint_layout"
+        android:id="@+id/info_expanded_constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <ImageButton
-            android:id="@+id/expand_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/collapse_button_bg"
-            android:contentDescription="@string/expand_collapse"
-            android:padding="8dp"
-            android:src="@drawable/ic_collapse"
-            app:layout_constraintBottom_toBottomOf="@+id/title_layout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/title_layout"
-            app:layout_constraintVertical_bias="0.35" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/title_layout"
@@ -63,7 +54,7 @@
             app:warningMessage="@{warningMessage}"
             tools:hint="@sample/data.json/title_info/title_hint">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <ba.grbo.doitintime.utilities.CustomTextInputEditText
                 android:id="@+id/title_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

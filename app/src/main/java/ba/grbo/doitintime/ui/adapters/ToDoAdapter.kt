@@ -3,13 +3,18 @@ package ba.grbo.doitintime.ui.adapters
 import ItemDiffCallbacks
 import android.content.Context
 import android.graphics.PorterDuff
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AutoCompleteTextView
+import android.widget.ImageButton
+import androidx.annotation.MenuRes
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ba.grbo.doitintime.R
@@ -22,6 +27,7 @@ import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.scopes.FragmentScoped
 import kotlinx.coroutines.*
 import javax.inject.Inject
+
 
 @FragmentScoped
 class ToDoAdapter @Inject constructor(
@@ -51,11 +57,11 @@ class ToDoAdapter @Inject constructor(
                 val binding = InfoItemBinding.inflate(inflater, parent, false).apply {
                     lifecycleOwner = viewLifecyleOwner
                     setupViews(
-                        titleEditText,
-                        priorityDropdownMenu,
-                        statusDropdownMenu,
-                        priorityLayout,
-                        statusLayout,
+                        infoExpanded.titleEditText,
+                        infoExpanded.priorityDropdownMenu,
+                        infoExpanded.statusDropdownMenu,
+                        infoExpanded.priorityLayout,
+                        infoExpanded.statusLayout,
                         observeEditTextLength,
                         showKeyboard,
                         hideKeyboard,
@@ -107,7 +113,7 @@ class ToDoAdapter @Inject constructor(
                     ),
                     listOf(
                         R.drawable.ic_priority_high,
-                        R.drawable.ic_priority_medium,
+                        R.drawable.ic_priority_normal,
                         R.drawable.ic_priority_low
                     ),
                     "priority",
@@ -191,13 +197,95 @@ class ToDoAdapter @Inject constructor(
         fun bind(
             info: Info,
             viewsEnabled: LiveData<Boolean>,
-            warningMessage: LiveData<Int>
+            warningMessage: LiveData<Int>,
+            context: Context,
+            viewLifecyleOwner: LifecycleOwner
         ) {
             binding.info = info
             binding.viewsEnabled = viewsEnabled
             binding.warningMessage = warningMessage
+            binding.cursorPosition = MutableLiveData(0).apply {
+                observe(viewLifecyleOwner) {
+                    Log.i("ToDoAdapter", "position: $it")
+                }
+            }
+
+            binding.infoCollapsed.expandButton.setOnClickListener {
+                info.expanded.value = true
+            }
+
+            binding.infoExpanded.expandButton.setOnClickListener {
+                info.expanded.value = false
+            }
+
+            binding.infoCollapsed.statusButton.setOnClickListener {
+                it.requestFocusFromTouch()
+                showPopup(
+                    R.menu.statuses_menu,
+                    it as ImageButton,
+                    context,
+                    ::getStatusAction
+                )
+            }
+
+            binding.infoCollapsed.priorityButton.setOnClickListener {
+                it.requestFocusFromTouch()
+                showPopup(
+                    R.menu.priorities_menu,
+                    it as ImageButton,
+                    context,
+                    ::getPrioriyAction
+                )
+            }
 
             binding.executePendingBindings()
+        }
+
+        private fun getStatusAction(button: ImageButton, id: Int) = when (id) {
+            R.id.status_active -> {
+                binding.info?.status?.value = Status.Active
+                true
+            }
+            R.id.status_completed -> {
+                binding.info?.status?.value = Status.Completed
+                true
+            }
+            R.id.status_on_hold -> {
+                binding.info?.status?.value = Status.OnHold
+                true
+            }
+            else -> false
+        }
+
+        private fun getPrioriyAction(button: ImageButton, id: Int) = when (id) {
+            R.id.high_priority -> {
+                binding.info?.priority?.value = Priority.High
+                true
+            }
+            R.id.normal_priority -> {
+                binding.info?.priority?.value = Priority.Normal
+                true
+            }
+            R.id.low_priority -> {
+                binding.info?.priority?.value = Priority.Low
+                true
+            }
+            else -> false
+        }
+
+        private fun showPopup(
+            @MenuRes menu: Int,
+            button: ImageButton,
+            context: Context,
+            action: (ImageButton, Int) -> Boolean
+        ) {
+            PopupMenu(context, button).apply {
+                setOnMenuItemClickListener {
+                    action(button, it.itemId)
+                }
+                inflate(menu)
+                show()
+            }
         }
     }
 
@@ -248,7 +336,9 @@ class ToDoAdapter @Inject constructor(
                 holder.bind(
                     info,
                     viewsEnabled,
-                    titleWarningMessage
+                    titleWarningMessage,
+                    context,
+                    viewLifecyleOwner
                 )
             }
         }
