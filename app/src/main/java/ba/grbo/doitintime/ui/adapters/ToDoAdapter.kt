@@ -2,31 +2,36 @@ package ba.grbo.doitintime.ui.adapters
 
 import ItemDiffCallbacks
 import android.content.Context
+import android.graphics.Point
 import android.graphics.PorterDuff
-import android.util.Log
+import android.graphics.Rect
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AutoCompleteTextView
-import android.widget.ImageButton
+import android.widget.*
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ba.grbo.doitintime.R
 import ba.grbo.doitintime.data.*
 import ba.grbo.doitintime.databinding.InfoItemBinding
 import ba.grbo.doitintime.databinding.TaskItemBinding
+import ba.grbo.doitintime.utilities.CustomEditText
+import ba.grbo.doitintime.utilities.CustomImageButton
 import ba.grbo.doitintime.utilities.MaterialSpinnerAdapter
-import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.scopes.FragmentScoped
 import kotlinx.coroutines.*
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 
 @FragmentScoped
@@ -35,9 +40,9 @@ class ToDoAdapter @Inject constructor(
     private val titleWarningMessage: LiveData<Int>,
     private val viewLifecyleOwner: LifecycleOwner,
     private val context: Context,
-    private val observeEditTextLength: (Int) -> Unit,
     private val showKeyboard: (View) -> Unit,
-    private val hideKeyboard: () -> Unit
+    private val hideKeyboard: (View) -> Unit,
+    private val setOnReleaseFocusListener: (onReleaseFocusListener: ((MotionEvent) -> Unit)?) -> Unit
 ) : ListAdapter<Item, RecyclerView.ViewHolder>(ItemDiffCallbacks()) {
     private val job = Job()
     private val adapterScope = CoroutineScope(Dispatchers.Default + job)
@@ -49,45 +54,164 @@ class ToDoAdapter @Inject constructor(
                 parent: ViewGroup,
                 viewLifecyleOwner: LifecycleOwner,
                 context: Context,
-                observeEditTextLength: (Int) -> Unit,
+                setOnReleaseFocusListener: (((ev: MotionEvent) -> Unit)?) -> Unit,
                 showKeyboard: (View) -> Unit,
-                hideKeyboard: () -> Unit
+                hideKeyboard: (View) -> Unit
             ): InfoViewHolder {
                 val inflater = LayoutInflater.from(parent.context)
                 val binding = InfoItemBinding.inflate(inflater, parent, false).apply {
                     lifecycleOwner = viewLifecyleOwner
                     setupViews(
-                        infoExpanded.titleEditText,
-                        infoExpanded.priorityDropdownMenu,
-                        infoExpanded.statusDropdownMenu,
-                        infoExpanded.priorityLayout,
-                        infoExpanded.statusLayout,
-                        observeEditTextLength,
+                        infoConstraintLayout,
+                        titleEditText,
+                        priorityButton,
+                        statusButton,
+                        expandButton,
+                        infoCard,
+                        setOnReleaseFocusListener,
                         showKeyboard,
                         hideKeyboard,
-                        context
+                        context,
+                        priorityDropdownMenu,
+                        statusDropdownMenu,
+                        priorityLayout,
+                        statusLayout,
+                        sortLinearLayout,
+                        sortHint,
+                        sortRadioGroup,
+                        sortOrderRadioGroup,
+                        titleRadioButton,
+                        priorityRadioButton,
+                        statusRadioButton,
+                        customRadioButton,
+                        ascendingRadioButton,
+                        descendingRadioButton
                     )
                 }
                 return InfoViewHolder(binding)
             }
 
             private fun setupViews(
-                titleEditText: TextInputEditText,
+                infoConstraintLayout: ConstraintLayout,
+                titleEditText: EditText,
+                priorityButton: CustomImageButton,
+                statusButton: CustomImageButton,
+                expandButton: CustomImageButton,
+                infoCard: MaterialCardView,
+                setOnReleaseFocusListener: (((ev: MotionEvent) -> Unit)?) -> Unit,
+                showKeyboard: (View) -> Unit,
+                hideKeyboard: (View) -> Unit,
+                context: Context,
                 priorityDropdownMenu: AutoCompleteTextView,
                 statusDropdownMenu: AutoCompleteTextView,
                 priorityLayout: TextInputLayout,
                 statusLayout: TextInputLayout,
-                observeEditTextLength: (Int) -> Unit,
-                showKeyboard: (View) -> Unit,
-                hideKeyboard: () -> Unit,
-                context: Context
+                sortLinearLayout: LinearLayout,
+                sortHint: TextView,
+                sortRadioGroup: RadioGroup,
+                sortOrderRadioGroup: RadioGroup,
+                titleRadioButton: RadioButton,
+                priorityRadioButton: RadioButton,
+                statusRadioButton: RadioButton,
+                customRadioButton: RadioButton,
+                ascendingRadioButton: RadioButton,
+                descendingRadioButton: RadioButton
             ) {
+                setupInfoConstraintLayout(infoConstraintLayout)
                 setupTitleEditText(
                     titleEditText,
-                    observeEditTextLength,
+                    infoCard,
                     showKeyboard,
-                    hideKeyboard
+                    hideKeyboard,
+                    setOnReleaseFocusListener
                 )
+                setupCustomButtons(
+                    priorityButton,
+                    statusButton,
+                    expandButton,
+                    context
+                )
+                setupDropdownMenus(
+                    priorityDropdownMenu,
+                    statusDropdownMenu,
+                    priorityLayout,
+                    statusLayout,
+                    context
+                )
+                setupSortLinearLayout(
+                    sortLinearLayout,
+                    sortHint,
+                    context
+                )
+                setupSortRadioGroups(
+                    sortRadioGroup,
+                    sortOrderRadioGroup,
+                    sortLinearLayout
+                )
+                setupSortRadioButtons(
+                    titleRadioButton,
+                    priorityRadioButton,
+                    statusRadioButton,
+                    customRadioButton,
+                    ascendingRadioButton,
+                    descendingRadioButton,
+                    sortLinearLayout
+                )
+            }
+
+            private fun setupInfoConstraintLayout(layout: ConstraintLayout) {
+                layout.setOnClickListener { it.requestFocusFromTouch() }
+            }
+
+            private fun setupTitleEditText(
+                editText: EditText,
+                infoCard: MaterialCardView,
+                showKeyboard: (View) -> Unit,
+                hideKeyboard: (View) -> Unit,
+                setOnReleaseFocusListener: (((ev: MotionEvent) -> Unit)?) -> Unit
+            ) {
+                editText.setOnFocusChangeListener { view, hasFocus ->
+                    view as CustomEditText
+                    if (hasFocus) {
+                        showKeyboard(view)
+                        setOnReleaseFocusListener {
+                            val touchPoint = Point(it.rawX.roundToInt(), it.rawY.roundToInt())
+                            val infoCardTouched = isPointInsideViewBounds(
+                                infoCard,
+                                touchPoint
+                            )
+                            if (!infoCardTouched) view.clearFocus()
+                        }
+                    }
+                    if (!hasFocus) {
+                        hideKeyboard(view)
+                        view.run {
+                            if (text.toString().isEmpty()) setText(originalText)
+                            else setText(removeExcessiveSpace(text.toString()))
+                            setOnReleaseFocusListener(null) // Releasing listener when leaving view
+                        }
+                    }
+                }
+            }
+
+            private fun setupCustomButtons(
+                priorityButton: CustomImageButton,
+                statusButton: CustomImageButton,
+                expandButton: CustomImageButton,
+                context: Context
+            ) {
+                setupPriorityCustomButton(priorityButton, context)
+                setupStatusCustomButton(statusButton, context)
+                setupExpandButton(expandButton)
+            }
+
+            private fun setupDropdownMenus(
+                priorityDropdownMenu: AutoCompleteTextView,
+                statusDropdownMenu: AutoCompleteTextView,
+                priorityLayout: TextInputLayout,
+                statusLayout: TextInputLayout,
+                context: Context
+            ) {
                 setupPriorityDropdownMenu(
                     priorityDropdownMenu,
                     priorityLayout,
@@ -131,35 +255,19 @@ class ToDoAdapter @Inject constructor(
                 setupDropdownMenu(
                     listOf(
                         Status.Active.identifier,
-                        Status.Completed.identifier,
-                        Status.OnHold.identifier
+                        Status.OnHold.identifier,
+                        Status.Completed.identifier
                     ),
                     listOf(
                         R.drawable.ic_status_active,
-                        R.drawable.ic_status_completed,
-                        R.drawable.ic_status_on_hold
+                        R.drawable.ic_status_on_hold,
+                        R.drawable.ic_status_completed
                     ),
                     "status",
                     statusDropdownMenu,
                     statusLayout,
                     context
                 )
-            }
-
-            private fun setupTitleEditText(
-                editText: TextInputEditText,
-                observeEditTextLength: (Int) -> Unit,
-                showKeyboard: (View) -> Unit,
-                hideKeyboard: () -> Unit
-            ) {
-//                editText.setOnFocusChangeListener { v, hasFocus ->
-//                    if (hasFocus) showKeyboard(v)
-//                    else hideKeyboard()
-//                }
-
-                editText.doOnTextChanged { text, _, _, _ ->
-                    text?.run { observeEditTextLength(length) }
-                }
             }
 
             private fun setupDropdownMenu(
@@ -192,100 +300,222 @@ class ToDoAdapter @Inject constructor(
                     )
                 }
             }
-        }
 
-        fun bind(
-            info: Info,
-            viewsEnabled: LiveData<Boolean>,
-            warningMessage: LiveData<Int>,
-            context: Context,
-            viewLifecyleOwner: LifecycleOwner
-        ) {
-            binding.info = info
-            binding.viewsEnabled = viewsEnabled
-            binding.warningMessage = warningMessage
-            binding.cursorPosition = MutableLiveData(0).apply {
-                observe(viewLifecyleOwner) {
-                    Log.i("ToDoAdapter", "position: $it")
+            private fun setupSortLinearLayout(
+                sortLinearLayout: LinearLayout,
+                sortHint: TextView,
+                context: Context
+            ) {
+                sortLinearLayout.setOnClickListener { it.requestFocusFromTouch() }
+
+                sortLinearLayout.setOnFocusChangeListener { _, hasFocus ->
+                    sortHint.setTextColor(
+                        ContextCompat.getColor(
+                            context,
+                            if (hasFocus) R.color.colorPrimary else R.color.radio_group_frame_text
+                        )
+                    )
                 }
             }
 
-            binding.infoCollapsed.expandButton.setOnClickListener {
-                info.expanded.value = true
+            private fun setupSortRadioGroups(
+                sortRadioGroup: RadioGroup,
+                sortOrderRadioGroup: RadioGroup,
+                sortLinearLayout: LinearLayout
+            ) {
+                setupSortRadioGroup(sortRadioGroup, sortLinearLayout)
+                setupSortOrderRadioGroup(sortOrderRadioGroup, sortLinearLayout)
             }
 
-            binding.infoExpanded.expandButton.setOnClickListener {
-                info.expanded.value = false
+            private fun setupSortRadioGroup(
+                sortRadioGroup: RadioGroup,
+                sortLinearLayout: LinearLayout
+            ) {
+                setupRadioGroup(sortRadioGroup, sortLinearLayout)
             }
 
-            binding.infoCollapsed.statusButton.setOnClickListener {
-                it.requestFocusFromTouch()
-                showPopup(
+            private fun setupSortOrderRadioGroup(
+                sortOrderRadioGroup: RadioGroup,
+                sortLinearLayout: LinearLayout
+            ) {
+                setupRadioGroup(sortOrderRadioGroup, sortLinearLayout)
+            }
+
+            private fun setupRadioGroup(
+                radioGroup: RadioGroup,
+                linearLayout: LinearLayout
+            ) {
+                radioGroup.setOnClickListener {
+                    linearLayout.requestFocusFromTouch()
+                }
+
+                radioGroup.setOnCheckedChangeListener { _, _ ->
+                    linearLayout.requestFocusFromTouch()
+                }
+            }
+
+
+            private fun setupPriorityCustomButton(
+                button: CustomImageButton,
+                context: Context
+            ) {
+                setupCustomButton(
+                    button,
+                    R.menu.priorities_menu,
+                    context,
+                    ::getPriorityAction
+                )
+            }
+
+            private fun setupStatusCustomButton(
+                button: CustomImageButton,
+                context: Context
+            ) {
+                setupCustomButton(
+                    button,
                     R.menu.statuses_menu,
-                    it as ImageButton,
                     context,
                     ::getStatusAction
                 )
             }
 
-            binding.infoCollapsed.priorityButton.setOnClickListener {
-                it.requestFocusFromTouch()
-                showPopup(
-                    R.menu.priorities_menu,
-                    it as ImageButton,
-                    context,
-                    ::getPrioriyAction
-                )
+            private fun setupExpandButton(expandButton: CustomImageButton) {
+                expandButton.setOnClickListener {
+                    it.tag = when (it.tag) {
+                        true -> false
+                        false -> true
+                        else -> throw IllegalArgumentException("Unknown tag: ${it.tag}")
+                    }
+                }
             }
+
+            private fun setupCustomButton(
+                button: CustomImageButton,
+                @MenuRes menu: Int,
+                context: Context,
+                action: (Int, CustomImageButton) -> Boolean,
+            ) {
+                button.setOnClickListener {
+                    it.requestFocusFromTouch()
+                    showPopup(
+                        menu,
+                        button,
+                        context,
+                        action
+                    )
+                }
+            }
+
+            private fun setupSortRadioButtons(
+                titleRadioButton: RadioButton,
+                priorityRadioButton: RadioButton,
+                statusRadioButton: RadioButton,
+                customRadioButton: RadioButton,
+                ascendingRadioButton: RadioButton,
+                descendingRadioButton: RadioButton,
+                sortLinearLayout: LinearLayout
+
+            ) {
+                setupSortRadioButton(titleRadioButton, sortLinearLayout)
+                setupSortRadioButton(priorityRadioButton, sortLinearLayout)
+                setupSortRadioButton(statusRadioButton, sortLinearLayout)
+                setupSortRadioButton(customRadioButton, sortLinearLayout)
+                setupSortRadioButton(ascendingRadioButton, sortLinearLayout)
+                setupSortRadioButton(descendingRadioButton, sortLinearLayout)
+            }
+
+            private fun setupSortRadioButton(
+                sortRadioButton: RadioButton,
+                sortLinearLayout: LinearLayout
+            ) {
+                sortRadioButton.setOnClickListener {
+                    sortLinearLayout.requestFocusFromTouch()
+                }
+            }
+
+            private fun isPointInsideViewBounds(view: View, point: Point): Boolean = Rect().run {
+                // get view rectangle
+                view.getDrawingRect(this)
+
+                // apply offset
+                IntArray(2).also { locationOnScreen ->
+                    view.getLocationOnScreen(locationOnScreen)
+                    offset(locationOnScreen[0], locationOnScreen[1])
+                }
+
+                // check is rectangle contains point
+                contains(point.x, point.y)
+            }
+
+            private fun removeExcessiveSpace(text: String) = text.trim()
+                .fold(StringBuilder()) { result, char ->
+                    if ((char != ' ' && char != '\n') ||
+                        (char != '\n' && result[result.length - 1] != ' ')
+                    ) {
+                        result.append(char)
+                    } else if ((char == '\n') && result[result.length - 1] != ' ') result.append(' ')
+                    result
+                }
+                .toString()
+
+            private fun getStatusAction(id: Int, statusButton: CustomImageButton) = when (id) {
+                R.id.status_active -> {
+                    statusButton.tag = Status.Active.identifier
+                    true
+                }
+                R.id.status_on_hold -> {
+                    statusButton.tag = Status.OnHold.identifier
+                    true
+                }
+                R.id.status_completed -> {
+                    statusButton.tag = Status.Completed.identifier
+                    true
+                }
+                else -> throw IllegalArgumentException("Unknown id: $id")
+            }
+
+            private fun getPriorityAction(id: Int, priorityButton: CustomImageButton) = when (id) {
+                R.id.high_priority -> {
+                    priorityButton.tag = Priority.High.name
+                    true
+                }
+                R.id.normal_priority -> {
+                    priorityButton.tag = Priority.Normal.name
+                    true
+                }
+                R.id.low_priority -> {
+                    priorityButton.tag = Priority.Low.name
+                    true
+                }
+                else -> throw IllegalArgumentException("Unknown id: $id")
+            }
+
+            private fun showPopup(
+                @MenuRes menu: Int,
+                button: CustomImageButton,
+                context: Context,
+                action: (Int, CustomImageButton) -> Boolean
+            ) {
+                PopupMenu(context, button).apply {
+                    setOnMenuItemClickListener {
+                        action(it.itemId, button)
+                    }
+                    inflate(menu)
+                    show()
+                }
+            }
+        }
+
+        fun bind(
+            info: Info,
+            viewsEnabled: LiveData<Boolean>,
+            warningMessage: LiveData<Int>
+        ) {
+            binding.info = info
+            binding.viewsEnabled = viewsEnabled
+            binding.warningMessage = warningMessage
 
             binding.executePendingBindings()
-        }
-
-        private fun getStatusAction(button: ImageButton, id: Int) = when (id) {
-            R.id.status_active -> {
-                binding.info?.status?.value = Status.Active
-                true
-            }
-            R.id.status_completed -> {
-                binding.info?.status?.value = Status.Completed
-                true
-            }
-            R.id.status_on_hold -> {
-                binding.info?.status?.value = Status.OnHold
-                true
-            }
-            else -> false
-        }
-
-        private fun getPrioriyAction(button: ImageButton, id: Int) = when (id) {
-            R.id.high_priority -> {
-                binding.info?.priority?.value = Priority.High
-                true
-            }
-            R.id.normal_priority -> {
-                binding.info?.priority?.value = Priority.Normal
-                true
-            }
-            R.id.low_priority -> {
-                binding.info?.priority?.value = Priority.Low
-                true
-            }
-            else -> false
-        }
-
-        private fun showPopup(
-            @MenuRes menu: Int,
-            button: ImageButton,
-            context: Context,
-            action: (ImageButton, Int) -> Boolean
-        ) {
-            PopupMenu(context, button).apply {
-                setOnMenuItemClickListener {
-                    action(button, it.itemId)
-                }
-                inflate(menu)
-                show()
-            }
         }
     }
 
@@ -318,7 +548,7 @@ class ToDoAdapter @Inject constructor(
             parent,
             viewLifecyleOwner,
             context,
-            observeEditTextLength,
+            setOnReleaseFocusListener,
             showKeyboard,
             hideKeyboard
         )
@@ -336,9 +566,7 @@ class ToDoAdapter @Inject constructor(
                 holder.bind(
                     info,
                     viewsEnabled,
-                    titleWarningMessage,
-                    context,
-                    viewLifecyleOwner
+                    titleWarningMessage
                 )
             }
         }

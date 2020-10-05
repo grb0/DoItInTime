@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:measureAllChildren="false"
-    tools:initialView="@sample/types">
+    tools:initialView="@sample/data.json/types/type">
 
     <include layout="@layout/info_item" />
 

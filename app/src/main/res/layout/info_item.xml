@@ -18,11 +18,11 @@
             name="viewsEnabled"
             type="androidx.lifecycle.LiveData&lt;Boolean&gt;" />
 
-        <variable
-            name="cursorPosition"
-            type="androidx.lifecycle.MutableLiveData&lt;Integer&gt;" />
+        <import type="android.text.InputType" />
 
         <import type="android.view.View" />
+
+        <import type="ba.grbo.doitintime.utilities.Converter" />
 
     </data>
 
@@ -30,46 +30,274 @@
         android:id="@+id/info_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        app:cardElevation="@{!info.expanded ? @dimen/card_collapsed : @dimen/card_expanded}"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        app:cardBackgroundColor="@{!info.expanded ? @color/info_card_expanded : @color/info_card_expanded}"
+        app:cardElevation="@{!info.expanded ? @dimen/info_card_elevation_collapsed : @dimen/info_card_elevation_expanded}"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageButton
-            android:id="@+id/expand_button"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/info_constraint_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/expand_button_bg"
-            android:contentDescription="@string/expand_collapse"
-            android:padding="8dp"
-            android:src="@drawable/ic_expand"
-            app:layout_constraintBottom_toBottomOf="@+id/title_layout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/title_layout"
-            app:layout_constraintVertical_bias="0.35" />
+            android:focusableInTouchMode="true">
 
-        <include
-            android:id="@+id/info_collapsed"
-            layout="@layout/info_item_collapsed"
-            android:visibility="@{!info.expanded ? View.VISIBLE : View.GONE}"
-            app:cursorPosition="@{cursorPosition}"
-            app:info="@{info}"
-            app:viewsEnabled="@{viewsEnabled}"
-            app:warningMessage="@{warningMessage}" />
+            <ba.grbo.doitintime.utilities.CustomImageButton
+                android:id="@+id/expand_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="3dp"
+                android:background="@drawable/expand_button_bg"
+                android:contentDescription="@string/expand_collapse"
+                android:padding="6.5dp"
+                android:src="@drawable/ic_expand"
+                app:expandImage="@={info.expanded}"
+                app:layout_constraintBottom_toBottomOf="@+id/title_edit_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
 
-        <include
-            android:id="@+id/info_expanded"
-            layout="@layout/info_item_expanded"
-            android:visibility="@{info.expanded ? View.VISIBLE: View.GONE}"
-            app:cursorPosition="@{cursorPosition}"
-            app:info="@{info}"
-            app:viewsEnabled="@{viewsEnabled}"
-            app:warningMessage="@{warningMessage}" />
+            <ba.grbo.doitintime.utilities.CustomImageButton
+                android:id="@+id/status_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/expand_button_bg"
+                android:contentDescription="@string/status_hint"
+                android:padding="6.5dp"
+                android:visibility="@{!info.expanded ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="@+id/title_edit_text"
+                app:layout_constraintEnd_toStartOf="@+id/expand_button"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                app:statusImage="@={info.status}"
+                tools:src="@drawable/ic_status_active" />
+
+            <ba.grbo.doitintime.utilities.CustomImageButton
+                android:id="@+id/priority_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/expand_button_bg"
+                android:contentDescription="@string/expand_collapse"
+                android:padding="6.5dp"
+                android:visibility="@{!info.expanded ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="@+id/title_edit_text"
+                app:layout_constraintEnd_toStartOf="@+id/status_button"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                app:priorityImage="@={info.priority}"
+                tools:src="@drawable/ic_priority_normal" />
+
+            <ba.grbo.doitintime.utilities.CustomEditText
+                android:id="@+id/title_edit_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/info_title_bg"
+                android:fontFamily="@font/roboto"
+                android:gravity="start|top"
+                android:hint="@string/enter_to_do_title"
+                android:importantForAutofill="no"
+                android:inputType="textMultiLine"
+                android:maxLength="100"
+                android:paddingStart="9dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="9dp"
+                android:paddingBottom="6dp"
+                android:selectAllOnFocus="true"
+                android:text="@={info.title}"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/priority_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                tools:text="@sample/data.json/title_info/title_hint" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/priority_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:hint="@string/priority_hint"
+                android:labelFor="@id/priority_dropdown_menu"
+                android:visibility="@{info.expanded ? View.VISIBLE : View.GONE}"
+                app:errorEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/title_edit_text"
+                app:layout_constraintTop_toBottomOf="@+id/title_edit_text"
+                app:startIconContentDescription="@string/important_sign"
+                app:startIconDrawable="@drawable/ic_priority_generic"
+                tools:hint=""
+                tools:startIconDrawable="@sample/data.json/title_info/priority_image">
+
+                <AutoCompleteTextView
+                    android:id="@+id/priority_dropdown_menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{viewsEnabled}"
+                    android:fontFamily="@font/roboto"
+                    android:inputType="@{InputType.TYPE_NULL}"
+                    android:text="@={Converter.priorityToString(info.priority)}"
+                    android:textSize="16sp"
+                    tools:text="@sample/data.json/title_info/priority_text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/status_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:hint="@string/status_hint"
+                android:labelFor="@id/status_dropdown_menu"
+                android:visibility="@{info.expanded ? View.VISIBLE : View.GONE}"
+                app:errorEnabled="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/priority_layout"
+                app:layout_constraintStart_toStartOf="@+id/title_edit_text"
+                app:layout_constraintTop_toBottomOf="@+id/priority_layout"
+                app:layout_constraintVertical_bias="0.0"
+                app:startIconContentDescription="@string/circle"
+                app:startIconDrawable="@drawable/ic_status_generic"
+                tools:hint=""
+                tools:startIconDrawable="@sample/data.json/title_info/status_image">
+
+                <AutoCompleteTextView
+                    android:id="@+id/status_dropdown_menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{viewsEnabled}"
+                    android:fontFamily="@font/roboto"
+                    android:inputType="@{InputType.TYPE_NULL}"
+                    android:text="@={Converter.statusToString(info.status)}"
+                    android:textSize="16sp"
+                    tools:text="@sample/data.json/title_info/status_text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <RelativeLayout
+                android:id="@+id/sort_relative_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@color/info_card_expanded"
+                android:visibility="@{info.expanded ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/status_layout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/status_layout">
+
+                <LinearLayout
+                    android:id="@+id/sort_linear_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:focusableInTouchMode="true"
+                    android:background="@drawable/radio_group_frame"
+                    android:orientation="horizontal">
+
+                    <RadioGroup
+                        android:id="@+id/sort_radio_group"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkedButton="@+id/custom_radio_button"
+                        android:paddingStart="8dp"
+                        android:paddingTop="20dp"
+                        android:paddingEnd="8dp">
+
+                        <RadioButton
+                            android:id="@+id/title_radio_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto"
+                            android:text="@string/description_sort"
+                            android:textSize="16sp" />
+
+                        <RadioButton
+                            android:id="@+id/priority_radio_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto"
+                            android:text="@string/priority_sort"
+                            android:textSize="16sp" />
+
+                        <RadioButton
+                            android:id="@+id/status_radio_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto"
+                            android:text="@string/status_sort"
+                            android:textSize="16sp" />
+
+                        <RadioButton
+                            android:id="@+id/custom_radio_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto"
+                            android:text="@string/custom_sort"
+                            android:textSize="16sp" />
+                    </RadioGroup>
+
+                    <RadioGroup
+                        android:id="@+id/sort_order_radio_group"
+                        android:layout_marginStart="40dp"
+                        android:paddingTop="20dp"
+                        android:checkedButton="@id/ascending_radio_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <RadioButton
+                            android:id="@+id/ascending_radio_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto"
+                            android:text="@string/ascending"
+                            android:textSize="16sp" />
+
+                        <RadioButton
+                            android:id="@+id/descending_radio_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto"
+                            android:text="@string/descending"
+                            android:textSize="16sp" />
+                    </RadioGroup>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/sort_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="6.5dp"
+                    android:background="@color/to_do_card"
+                    android:letterSpacing="0.01"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="@string/sort_tasks_by"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                    android:textColor="@color/radio_group_frame_text" />
+
+            </RelativeLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </com.google.android.material.card.MaterialCardView>
 </layout>

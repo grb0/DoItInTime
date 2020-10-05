@@ -53,6 +53,12 @@
     <string name="new_task">New task</string>
     <string name="task">Task</string>
     <string name="expand_collapse">Expand/Collapse</string>
+    <string name="enter_to_do_title">Enter to-do title…</string>
+    <string name="sort_tasks_by">Sort tasks by</string>
+    <string name="custom_sort">Custom</string>
+    <string name="status_sort">Status</string>
+    <string name="priority_sort">Priority</string>
+    <string name="description_sort">Description</string>
 
 
 </resources>

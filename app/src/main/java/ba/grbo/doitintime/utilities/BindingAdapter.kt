@@ -40,7 +40,16 @@ fun CustomImageButton.bindPriorityImage(priority: Priority?) {
                     Priority.Low -> R.drawable.ic_priority_low
                 }
             )
+            executed = true
             tag = it.name
+        } else if (tag == it.name) {
+            setImageResource(
+                when (it) {
+                    Priority.High -> R.drawable.ic_priority_high
+                    Priority.Normal -> R.drawable.ic_priority_normal
+                    Priority.Low -> R.drawable.ic_priority_low
+                }
+            )
         }
     }
 }
@@ -64,7 +73,16 @@ fun CustomImageButton.bindStatusImage(status: Status?) {
                     Status.OnHold -> R.drawable.ic_status_on_hold
                 }
             )
+            executed = true
             tag = it.identifier
+        } else if (tag == it.identifier) {
+            setImageResource(
+                when (it) {
+                    Status.Active -> R.drawable.ic_status_active
+                    Status.Completed -> R.drawable.ic_status_completed
+                    Status.OnHold -> R.drawable.ic_status_on_hold
+                }
+            )
         }
     }
 }
@@ -77,19 +95,23 @@ fun CustomImageButton.setStatusTagListener(attrChange: InverseBindingListener) {
     setOnTagChangedListener { attrChange.onChange() }
 }
 
-@BindingAdapter("cursorPosition")
-fun CustomTextInputEditText.bindSelection(position: Int) {
-//    if (this.position != position) {
-//        setSelection(position)
-//    }
+@BindingAdapter("expandImage")
+fun CustomImageButton.bindExpandImage(state: Boolean?) {
+    state?.let {
+        if (tag != it) {
+            setImageResource(if (it) R.drawable.ic_collapse else R.drawable.ic_expand)
+            executed = true
+            tag = it
+        } else if (tag == it) {
+            setImageResource(if (it) R.drawable.ic_collapse else R.drawable.ic_expand)
+        }
+    }
 }
 
-@InverseBindingAdapter(attribute = "cursorPosition")
-fun CustomTextInputEditText.getCursorPosition() = selectionStart
+@InverseBindingAdapter(attribute = "expandImage")
+fun CustomImageButton.getState(): Boolean = tag as Boolean
 
-@BindingAdapter("cursorPositionAttrChanged")
-fun CustomTextInputEditText.setCursorPositionListener(attrChange: InverseBindingListener) {
-    setOnSelectionChangedListener {
-        attrChange.onChange()
-    }
+@BindingAdapter("expandImageAttrChanged")
+fun CustomImageButton.setStateTagListener(attrChange: InverseBindingListener) {
+    setOnTagChangedListener { attrChange.onChange() }
 }

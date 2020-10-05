@@ -31,16 +31,16 @@
                         android:title="@string/active" />
 
                     <item
-                        android:id="@+id/show_completed"
-                        android:checkable="true"
-                        android:icon="@drawable/ic_status_completed"
-                        android:title="@string/completed" />
-
-                    <item
                         android:id="@+id/show_on_hold"
                         android:checkable="true"
                         android:icon="@drawable/ic_status_on_hold"
                         android:title="@string/on_hold" />
+
+                    <item
+                        android:id="@+id/show_completed"
+                        android:checkable="true"
+                        android:icon="@drawable/ic_status_completed"
+                        android:title="@string/completed" />
                 </menu>
             </item>
 
@@ -62,14 +62,14 @@
                                 android:title="@string/active" />
 
                             <item
-                                android:id="@+id/sort_completed"
-                                android:icon="@drawable/ic_status_completed"
-                                android:title="@string/completed" />
-
-                            <item
                                 android:id="@+id/sort_on_hold"
                                 android:icon="@drawable/ic_status_on_hold"
                                 android:title="@string/on_hold" />
+
+                            <item
+                                android:id="@+id/sort_completed"
+                                android:icon="@drawable/ic_status_completed"
+                                android:title="@string/completed" />
                         </menu>
                     </item>
 

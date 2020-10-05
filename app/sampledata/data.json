@@ -1,8 +1,7 @@
 {
   "title_info": [
     {
-      "title": "Today",
-      "title_hint": "",
+      "title_hint": "@string/enter_to_do_title",
       "priority_text": "High",
       "priority_image": "@drawable/ic_priority_high",
       "status_image": "@drawable/ic_status_active",
@@ -27,7 +26,7 @@
     },
     {
       "description": "Help those in need",
-      "priority": "@drawable/ic_priority_medium",
+      "priority": "@drawable/ic_priority_normal",
       "status": "@drawable/ic_status_completed"
     }
   ],

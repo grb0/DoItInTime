@@ -16,6 +16,9 @@ data class Info(
     @Ignore
     var expanded = MutableLiveData(false)
 
+    @Ignore
+    var focusedView = MutableLiveData<String>()
+
     constructor(
         title: MutableLiveData<String>,
         priority: MutableLiveData<Priority> = MutableLiveData(Priority.Normal),

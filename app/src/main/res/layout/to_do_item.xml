@@ -18,16 +18,17 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/todo_card"
+        app:cardBackgroundColor="@color/to_do_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        app:cardElevation="4dp">
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        app:cardElevation="@dimen/to_do_card_elevation">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/add_to_do_constraint_layout"
+            android:id="@+id/to_do_constraint_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".ui.fragments.AddToDoFragment">
@@ -36,7 +37,7 @@
                 android:id="@+id/todo_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:paddingTop="8dp"
+                android:paddingTop="4dp"
                 app:adapter="@{adapter}"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -51,11 +52,11 @@
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
-                android:padding="6dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:padding="8dp"
                 android:text="@string/new_task"
                 android:textSize="16sp"
                 app:icon="@drawable/ic_assignment"

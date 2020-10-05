@@ -12,4 +12,13 @@
     <color name="lighter_gray">#ECECEC</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
+
+    <color name="to_do_card">#ebecf0</color>
+    <color name="info_card_collapsed">#ebecf0</color>
+    <color name="info_card_expanded">#ECECEC</color>
+
+
+    <color name="radio_group_frame_stroke">#999999</color>
+    <color name="radio_group_frame_text">#555555</color>
+
 </resources>

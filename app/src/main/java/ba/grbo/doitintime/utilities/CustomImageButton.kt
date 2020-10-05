@@ -6,6 +6,7 @@ import androidx.appcompat.widget.AppCompatImageButton
 
 class CustomImageButton : AppCompatImageButton {
     private var onTagChangedListener: (() -> Unit)? = null
+    var executed = false
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attributeSet: AttributeSet?) : super(context, attributeSet)
@@ -17,7 +18,8 @@ class CustomImageButton : AppCompatImageButton {
 
     override fun setTag(tag: Any?) {
         super.setTag(tag)
-        onTagChangedListener?.invoke()
+        if (!executed) onTagChangedListener?.invoke()
+        executed = false
     }
 
     fun setOnTagChangedListener(onTagChangedListener: () -> Unit) {

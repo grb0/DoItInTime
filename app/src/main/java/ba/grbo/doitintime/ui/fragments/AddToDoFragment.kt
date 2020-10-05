@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import ba.grbo.doitintime.R
 import ba.grbo.doitintime.databinding.FragmentAddOrUpdateToDoBinding
+import ba.grbo.doitintime.ui.DoItInTimeActivity
 import ba.grbo.doitintime.ui.adapters.ToDoAdapter
 import ba.grbo.doitintime.ui.viewmodels.AddToDoViewModel
 import ba.grbo.doitintime.utilities.EventObserver
@@ -35,9 +36,9 @@ class AddToDoFragment : Fragment() {
                 addToDoViewModel.titleWarningMessage,
                 viewLifecycleOwner,
                 requireContext(),
-                ::observeTitleLength,
                 ::showKeyboard,
-                ::hideKeyboard
+                ::hideKeyboard,
+                ::setOnReleaseFocusListener
             )
             toDo = addToDoViewModel.toDo
         }
@@ -66,7 +67,6 @@ class AddToDoFragment : Fragment() {
 
                 override fun onAnimationEnd(animation: Animation?) {
                     addToDoViewModel.onAnimationEnd()
-                    setupEverything()
                 }
 
                 override fun onAnimationRepeat(animation: Animation?) {
@@ -80,24 +80,6 @@ class AddToDoFragment : Fragment() {
         binding.adapter?.cancelJob()
     }
 
-    private fun setupEverything() {
-        binding.run {
-//            lifecycleOwner = viewLifecycleOwner
-//            adapter = ToDoAdapter(
-//                addToDoViewModel.viewsEnabled,
-//                addToDoViewModel.titleWarningMessage,
-//                viewLifecycleOwner,
-//                requireContext(),
-//                ::observeTitleLength,
-//                ::showKeyboard,
-//                ::hideKeyboard
-//            )
-//            toDo = addToDoViewModel.toDo
-        }
-
-//        addToDoViewModel.addObservers()
-    }
-
     private fun AddToDoViewModel.addObservers() {
         observeTitleStillTooLongEvent()
         observeProceedToToDosFragmentEvent()
@@ -108,7 +90,6 @@ class AddToDoFragment : Fragment() {
 
     private fun AddToDoViewModel.observeTitleStillTooLongEvent() {
         titleStillTooLongEvent.observe(viewLifecycleOwner, EventObserver({
-            hideKeyboard()
             showSnackbar(it)
         }))
     }
@@ -153,9 +134,9 @@ class AddToDoFragment : Fragment() {
             .show()
     }
 
-    private fun hideKeyboard() {
+    private fun hideKeyboard(view: View) {
         (requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-            .hideSoftInputFromWindow(binding.addOrUpdateLinearLayout.windowToken, 0)
+            .hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     private fun showKeyboard(view: View) {
@@ -169,5 +150,9 @@ class AddToDoFragment : Fragment() {
 
     private fun observeTitleLength(length: Int) {
         addToDoViewModel.onTitleLengthChanged(length)
+    }
+
+    private fun setOnReleaseFocusListener(onReleaseFocusListener: ((MotionEvent) -> Unit)?) {
+        (requireActivity() as DoItInTimeActivity).onReleaseFocusListener = onReleaseFocusListener
     }
 }
