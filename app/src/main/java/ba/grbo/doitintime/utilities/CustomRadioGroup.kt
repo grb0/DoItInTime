@@ -3,21 +3,22 @@ package ba.grbo.doitintime.utilities
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.RadioGroup
+import androidx.annotation.IdRes
 
-class CustomRadioGroup: RadioGroup {
-    private var onTagChangedListener: (() -> Unit)? = null
-    var executed = false
+class CustomRadioGroup : RadioGroup {
+    private var onCheckedIdChangedListener: (() -> Unit)? = null
+
+    @IdRes
+    var checkedId: Int = -1
+        set(value) {
+            field = value
+            onCheckedIdChangedListener?.invoke()
+        }
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attributeSet: AttributeSet?) : super(context, attributeSet)
 
-    override fun setTag(tag: Any?) {
-        super.setTag(tag)
-        if (!executed) onTagChangedListener?.invoke()
-        executed = false
-    }
-
-    fun setOnTagChangedListener(onTagChangedListener: () -> Unit) {
-        this.onTagChangedListener = onTagChangedListener
+    fun setOnCheckedIdChangedListener(onCheckedIdChangedListener: () -> Unit) {
+        this.onCheckedIdChangedListener = onCheckedIdChangedListener
     }
 }

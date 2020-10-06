@@ -4,19 +4,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/high_priority"
+        android:id="@+id/popup_priority_high"
         android:icon="@drawable/ic_priority_high"
         android:title="@string/high_priority"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/normal_priority"
+        android:id="@+id/popup_priority_normal"
         android:icon="@drawable/ic_priority_normal"
         android:title="@string/normal_priority"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/low_priority"
+        android:id="@+id/popup_priority_low"
         android:icon="@drawable/ic_priority_low"
         android:title="@string/low_priority"
         app:showAsAction="ifRoom" />

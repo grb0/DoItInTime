@@ -4,19 +4,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/status_active"
+        android:id="@+id/popup_status_active"
         android:icon="@drawable/ic_status_active"
         android:title="@string/active"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/status_on_hold"
+        android:id="@+id/popup_status_on_hold"
         android:icon="@drawable/ic_status_on_hold"
         android:title="@string/on_hold"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/status_completed"
+        android:id="@+id/popup_status_completed"
         android:icon="@drawable/ic_status_completed"
         android:title="@string/completed"
         app:showAsAction="ifRoom" />

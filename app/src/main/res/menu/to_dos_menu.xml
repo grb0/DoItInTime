@@ -24,20 +24,20 @@
 
                 <menu>
                     <item
-                        android:id="@+id/show_active"
+                        android:id="@+id/show_status_active"
                         android:checkable="true"
                         android:checked="true"
                         android:icon="@drawable/ic_status_active"
                         android:title="@string/active" />
 
                     <item
-                        android:id="@+id/show_on_hold"
+                        android:id="@+id/show_status_on_hold"
                         android:checkable="true"
                         android:icon="@drawable/ic_status_on_hold"
                         android:title="@string/on_hold" />
 
                     <item
-                        android:id="@+id/show_completed"
+                        android:id="@+id/show_status_completed"
                         android:checkable="true"
                         android:icon="@drawable/ic_status_completed"
                         android:title="@string/completed" />
@@ -57,17 +57,17 @@
 
                         <menu>
                             <item
-                                android:id="@+id/sort_active"
+                                android:id="@+id/sort_status_active"
                                 android:icon="@drawable/ic_status_active"
                                 android:title="@string/active" />
 
                             <item
-                                android:id="@+id/sort_on_hold"
+                                android:id="@+id/sort_status_on_hold"
                                 android:icon="@drawable/ic_status_on_hold"
                                 android:title="@string/on_hold" />
 
                             <item
-                                android:id="@+id/sort_completed"
+                                android:id="@+id/sort_status_completed"
                                 android:icon="@drawable/ic_status_completed"
                                 android:title="@string/completed" />
                         </menu>
@@ -80,17 +80,17 @@
 
                         <menu>
                             <item
-                                android:id="@+id/high_priority"
+                                android:id="@+id/sort_priority_high"
                                 android:icon="@drawable/ic_priority_high"
                                 android:title="@string/high_priority" />
 
                             <item
-                                android:id="@+id/medium_priority"
+                                android:id="@+id/sort_priority_normal"
                                 android:icon="@drawable/ic_priority_normal"
                                 android:title="@string/normal_priority" />
 
                             <item
-                                android:id="@+id/low_priority"
+                                android:id="@+id/sort_priority_low"
                                 android:icon="@drawable/ic_priority_low"
                                 android:title="@string/low_priority" />
                         </menu>

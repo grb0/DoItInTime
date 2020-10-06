@@ -24,10 +24,7 @@ import ba.grbo.doitintime.R
 import ba.grbo.doitintime.data.*
 import ba.grbo.doitintime.databinding.InfoItemBinding
 import ba.grbo.doitintime.databinding.TaskItemBinding
-import ba.grbo.doitintime.utilities.CustomEditText
-import ba.grbo.doitintime.utilities.CustomImageButton
-import ba.grbo.doitintime.utilities.CustomRadioGroup
-import ba.grbo.doitintime.utilities.MaterialSpinnerAdapter
+import ba.grbo.doitintime.utilities.*
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.scopes.FragmentScoped
@@ -307,44 +304,26 @@ class ToDoAdapter @Inject constructor(
                 sortTypeRadioGroup: CustomRadioGroup,
                 linearLayout: LinearLayout
             ) {
-                val tag = { id: Int ->
-                    when (id) {
-                        R.id.description_radio_button -> TasksSortingType.DESCRIPTION
-                        R.id.priority_radio_button -> TasksSortingType.PRIORITY
-                        R.id.status_radio_button -> TasksSortingType.STATUS
-                        R.id.custom_radio_button -> TasksSortingType.CUSTOM
-                        else -> throw IllegalArgumentException("Unknown id: $id")
-                    }
-                }
-                setupRadioGroup(sortTypeRadioGroup, linearLayout, tag)
+                setupRadioGroup(sortTypeRadioGroup, linearLayout)
             }
 
             private fun setupSortOrderRadioGroup(
                 sortOrderRadioGroup: CustomRadioGroup,
                 linearLayout: LinearLayout
             ) {
-                val tag = { id: Int ->
-                    when (id) {
-                        R.id.descending_radio_button -> TasksSortingOrder.DESCENDING
-                        R.id.ascending_radio_button -> TasksSortingOrder.ASCENDING
-                        else -> throw IllegalArgumentException("Unknown id: $id")
-                    }
-                }
-                setupRadioGroup(sortOrderRadioGroup, linearLayout, tag)
+                setupRadioGroup(sortOrderRadioGroup, linearLayout)
             }
 
             private fun setupRadioGroup(
                 radioGroup: CustomRadioGroup,
-                linearLayout: LinearLayout,
-                tag: (Int) -> Any
+                linearLayout: LinearLayout
             ) {
                 radioGroup.setOnClickListener {
                     linearLayout.requestFocusFromTouch()
                 }
 
-
                 radioGroup.setOnCheckedChangeListener { _, checkedId ->
-                    radioGroup.tag = tag(checkedId)
+                    radioGroup.checkedId = checkedId
                 }
             }
 
@@ -354,7 +333,7 @@ class ToDoAdapter @Inject constructor(
             ) {
                 setupCustomButton(
                     button,
-                    R.menu.priorities_menu,
+                    R.menu.priorities_popup_menu,
                     context,
                     ::getPriorityAction
                 )
@@ -366,7 +345,7 @@ class ToDoAdapter @Inject constructor(
             ) {
                 setupCustomButton(
                     button,
-                    R.menu.statuses_menu,
+                    R.menu.statuses_popup_menu,
                     context,
                     ::getStatusAction
                 )
@@ -374,11 +353,10 @@ class ToDoAdapter @Inject constructor(
 
             private fun setupExpandButton(expandButton: CustomImageButton) {
                 expandButton.setOnClickListener {
-                    it.tag = when (it.tag) {
-                        true -> false
-                        false -> true
-                        else -> throw IllegalArgumentException("Unknown tag: ${it.tag}")
-                    }
+                    expandButton.setImageResource(
+                        if (expandButton.imgResource.isExpanded) R.drawable.ic_expand
+                        else R.drawable.ic_collapse
+                    )
                 }
             }
 
@@ -451,22 +429,36 @@ class ToDoAdapter @Inject constructor(
                 }
                 .toString()
 
-            private fun getStatusAction(
+            private fun getPriorityAction(
                 @IdRes itemId: Int,
-                statusButton: CustomImageButton
+                priorityButton: CustomImageButton
             ) = try {
-                statusButton.tag = Status.getStatus(itemId)
+                priorityButton.setImageResource(
+                    when (itemId) {
+                        R.id.popup_priority_high -> R.drawable.ic_priority_high
+                        R.id.popup_priority_normal -> R.drawable.ic_priority_normal
+                        R.id.popup_priority_low -> R.drawable.ic_priority_low
+                        else -> throw IllegalArgumentException("Unknown itemId: $itemId")
+                    }
+                )
                 true
             } catch (e: IllegalArgumentException) {
                 // TODO Send exception to the server
                 false
             }
 
-            private fun getPriorityAction(
+            private fun getStatusAction(
                 @IdRes itemId: Int,
-                priorityButton: CustomImageButton
+                statusButton: CustomImageButton
             ) = try {
-                priorityButton.tag = Priority.getPriority(itemId)
+                statusButton.setImageResource(
+                    when (itemId) {
+                        R.id.popup_status_active -> R.drawable.ic_status_active
+                        R.id.popup_status_on_hold -> R.drawable.ic_status_on_hold
+                        R.id.popup_status_completed -> R.drawable.ic_status_completed
+                        else -> throw IllegalArgumentException("Unknown itemId: $itemId")
+                    }
+                )
                 true
             } catch (e: IllegalArgumentException) {
                 // TODO Send exception to the server
