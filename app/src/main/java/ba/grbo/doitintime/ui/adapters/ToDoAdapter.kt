@@ -344,7 +344,6 @@ class ToDoAdapter @Inject constructor(
 
 
                 radioGroup.setOnCheckedChangeListener { _, checkedId ->
-                    linearLayout.requestFocusFromTouch()
                     radioGroup.tag = tag(checkedId)
                 }
             }

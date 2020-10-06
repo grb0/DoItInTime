@@ -260,7 +260,7 @@
                         android:layout_marginStart="40dp"
                         android:checkedButton="@id/ascending_radio_button"
                         android:paddingTop="20dp"
-                        app:checkedTasksSortingOrderRadioButton="@{info.tasksSorting.order}">
+                        app:checkedTasksSortingOrderRadioButton="@={info.tasksSorting.order}">
 
                         <RadioButton
                             android:id="@+id/ascending_radio_button"
