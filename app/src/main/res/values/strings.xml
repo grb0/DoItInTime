@@ -59,6 +59,6 @@
     <string name="status_sort">Status</string>
     <string name="priority_sort">Priority</string>
     <string name="description_sort">Description</string>
-
+    <string name="dark_theme">Dark theme</string>
 
 </resources>

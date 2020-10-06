@@ -28,7 +28,7 @@ class AddToDoViewModel @ViewModelInject constructor(
 
     val toDo = ToDo(info, emptyList())
 
-//    val toDo = repository.observeToDo(1)
+//    val to-Do = repository.observeToDo(1)
 //        .asLiveData()
 //        .map {
 //            when (it) {

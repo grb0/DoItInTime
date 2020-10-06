@@ -10,6 +10,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.annotation.IdRes
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -25,6 +26,7 @@ import ba.grbo.doitintime.databinding.InfoItemBinding
 import ba.grbo.doitintime.databinding.TaskItemBinding
 import ba.grbo.doitintime.utilities.CustomEditText
 import ba.grbo.doitintime.utilities.CustomImageButton
+import ba.grbo.doitintime.utilities.CustomRadioGroup
 import ba.grbo.doitintime.utilities.MaterialSpinnerAdapter
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputLayout
@@ -78,9 +80,9 @@ class ToDoAdapter @Inject constructor(
                         statusLayout,
                         sortLinearLayout,
                         sortHint,
-                        sortRadioGroup,
+                        sortTypeRadioGroup,
                         sortOrderRadioGroup,
-                        titleRadioButton,
+                        descriptionRadioButton,
                         priorityRadioButton,
                         statusRadioButton,
                         customRadioButton,
@@ -108,9 +110,9 @@ class ToDoAdapter @Inject constructor(
                 statusLayout: TextInputLayout,
                 sortLinearLayout: LinearLayout,
                 sortHint: TextView,
-                sortRadioGroup: RadioGroup,
-                sortOrderRadioGroup: RadioGroup,
-                titleRadioButton: RadioButton,
+                sortTypeRadioGroup: CustomRadioGroup,
+                sortOrderRadioGroup: CustomRadioGroup,
+                descriptionRadioButton: RadioButton,
                 priorityRadioButton: RadioButton,
                 statusRadioButton: RadioButton,
                 customRadioButton: RadioButton,
@@ -144,12 +146,12 @@ class ToDoAdapter @Inject constructor(
                     context
                 )
                 setupSortRadioGroups(
-                    sortRadioGroup,
+                    sortTypeRadioGroup,
                     sortOrderRadioGroup,
                     sortLinearLayout
                 )
                 setupSortRadioButtons(
-                    titleRadioButton,
+                    descriptionRadioButton,
                     priorityRadioButton,
                     statusRadioButton,
                     customRadioButton,
@@ -230,17 +232,8 @@ class ToDoAdapter @Inject constructor(
                 context: Context
             ) {
                 setupDropdownMenu(
-                    listOf(
-                        Priority.High.name,
-                        Priority.Normal.name,
-                        Priority.Low.name
-                    ),
-                    listOf(
-                        R.drawable.ic_priority_high,
-                        R.drawable.ic_priority_normal,
-                        R.drawable.ic_priority_low
-                    ),
-                    "priority",
+                    Priority.priorities,
+                    Priority::getDrawables,
                     priorityDropdownMenu,
                     priorityLayout,
                     context
@@ -253,17 +246,8 @@ class ToDoAdapter @Inject constructor(
                 context: Context
             ) {
                 setupDropdownMenu(
-                    listOf(
-                        Status.Active.identifier,
-                        Status.OnHold.identifier,
-                        Status.Completed.identifier
-                    ),
-                    listOf(
-                        R.drawable.ic_status_active,
-                        R.drawable.ic_status_on_hold,
-                        R.drawable.ic_status_completed
-                    ),
-                    "status",
+                    Status.statuses,
+                    Status::getDrawables,
                     statusDropdownMenu,
                     statusLayout,
                     context
@@ -272,8 +256,7 @@ class ToDoAdapter @Inject constructor(
 
             private fun setupDropdownMenu(
                 contents: List<String>,
-                drawables: List<Int>,
-                type: String,
+                drawables: (String) -> Int,
                 dropdownMenu: AutoCompleteTextView,
                 layout: TextInputLayout,
                 context: Context
@@ -290,14 +273,7 @@ class ToDoAdapter @Inject constructor(
                     if (content.toString() == "") return@doOnTextChanged
 
                     layout.setStartIconTintMode(PorterDuff.Mode.DST)
-                    layout.setStartIconDrawable(
-                        when (content.toString()) {
-                            contents[0] -> drawables[0]
-                            contents[1] -> drawables[1]
-                            contents[2] -> drawables[2]
-                            else -> throw IllegalArgumentException("Unknown $type: $content")
-                        }
-                    )
+                    layout.setStartIconDrawable(drawables(content.toString()))
                 }
             }
 
@@ -319,41 +295,59 @@ class ToDoAdapter @Inject constructor(
             }
 
             private fun setupSortRadioGroups(
-                sortRadioGroup: RadioGroup,
-                sortOrderRadioGroup: RadioGroup,
+                sortTypeRadioGroup: CustomRadioGroup,
+                sortOrderRadioGroup: CustomRadioGroup,
                 sortLinearLayout: LinearLayout
             ) {
-                setupSortRadioGroup(sortRadioGroup, sortLinearLayout)
+                setupSortTypeRadioGroup(sortTypeRadioGroup, sortLinearLayout)
                 setupSortOrderRadioGroup(sortOrderRadioGroup, sortLinearLayout)
             }
 
-            private fun setupSortRadioGroup(
-                sortRadioGroup: RadioGroup,
-                sortLinearLayout: LinearLayout
+            private fun setupSortTypeRadioGroup(
+                sortTypeRadioGroup: CustomRadioGroup,
+                linearLayout: LinearLayout
             ) {
-                setupRadioGroup(sortRadioGroup, sortLinearLayout)
+                val tag = { id: Int ->
+                    when (id) {
+                        R.id.description_radio_button -> TasksSortingType.DESCRIPTION
+                        R.id.priority_radio_button -> TasksSortingType.PRIORITY
+                        R.id.status_radio_button -> TasksSortingType.STATUS
+                        R.id.custom_radio_button -> TasksSortingType.CUSTOM
+                        else -> throw IllegalArgumentException("Unknown id: $id")
+                    }
+                }
+                setupRadioGroup(sortTypeRadioGroup, linearLayout, tag)
             }
 
             private fun setupSortOrderRadioGroup(
-                sortOrderRadioGroup: RadioGroup,
-                sortLinearLayout: LinearLayout
+                sortOrderRadioGroup: CustomRadioGroup,
+                linearLayout: LinearLayout
             ) {
-                setupRadioGroup(sortOrderRadioGroup, sortLinearLayout)
+                val tag = { id: Int ->
+                    when (id) {
+                        R.id.descending_radio_button -> TasksSortingOrder.DESCENDING
+                        R.id.ascending_radio_button -> TasksSortingOrder.ASCENDING
+                        else -> throw IllegalArgumentException("Unknown id: $id")
+                    }
+                }
+                setupRadioGroup(sortOrderRadioGroup, linearLayout, tag)
             }
 
             private fun setupRadioGroup(
-                radioGroup: RadioGroup,
-                linearLayout: LinearLayout
+                radioGroup: CustomRadioGroup,
+                linearLayout: LinearLayout,
+                tag: (Int) -> Any
             ) {
                 radioGroup.setOnClickListener {
                     linearLayout.requestFocusFromTouch()
                 }
 
-                radioGroup.setOnCheckedChangeListener { _, _ ->
+
+                radioGroup.setOnCheckedChangeListener { _, checkedId ->
                     linearLayout.requestFocusFromTouch()
+                    radioGroup.tag = tag(checkedId)
                 }
             }
-
 
             private fun setupPriorityCustomButton(
                 button: CustomImageButton,
@@ -407,7 +401,7 @@ class ToDoAdapter @Inject constructor(
             }
 
             private fun setupSortRadioButtons(
-                titleRadioButton: RadioButton,
+                descriptionRadioButton: RadioButton,
                 priorityRadioButton: RadioButton,
                 statusRadioButton: RadioButton,
                 customRadioButton: RadioButton,
@@ -416,7 +410,7 @@ class ToDoAdapter @Inject constructor(
                 sortLinearLayout: LinearLayout
 
             ) {
-                setupSortRadioButton(titleRadioButton, sortLinearLayout)
+                setupSortRadioButton(descriptionRadioButton, sortLinearLayout)
                 setupSortRadioButton(priorityRadioButton, sortLinearLayout)
                 setupSortRadioButton(statusRadioButton, sortLinearLayout)
                 setupSortRadioButton(customRadioButton, sortLinearLayout)
@@ -458,36 +452,26 @@ class ToDoAdapter @Inject constructor(
                 }
                 .toString()
 
-            private fun getStatusAction(id: Int, statusButton: CustomImageButton) = when (id) {
-                R.id.status_active -> {
-                    statusButton.tag = Status.Active.identifier
-                    true
-                }
-                R.id.status_on_hold -> {
-                    statusButton.tag = Status.OnHold.identifier
-                    true
-                }
-                R.id.status_completed -> {
-                    statusButton.tag = Status.Completed.identifier
-                    true
-                }
-                else -> throw IllegalArgumentException("Unknown id: $id")
+            private fun getStatusAction(
+                @IdRes itemId: Int,
+                statusButton: CustomImageButton
+            ) = try {
+                statusButton.tag = Status.getStatus(itemId)
+                true
+            } catch (e: IllegalArgumentException) {
+                // TODO Send exception to the server
+                false
             }
 
-            private fun getPriorityAction(id: Int, priorityButton: CustomImageButton) = when (id) {
-                R.id.high_priority -> {
-                    priorityButton.tag = Priority.High.name
-                    true
-                }
-                R.id.normal_priority -> {
-                    priorityButton.tag = Priority.Normal.name
-                    true
-                }
-                R.id.low_priority -> {
-                    priorityButton.tag = Priority.Low.name
-                    true
-                }
-                else -> throw IllegalArgumentException("Unknown id: $id")
+            private fun getPriorityAction(
+                @IdRes itemId: Int,
+                priorityButton: CustomImageButton
+            ) = try {
+                priorityButton.tag = Priority.getPriority(itemId)
+                true
+            } catch (e: IllegalArgumentException) {
+                // TODO Send exception to the server
+                false
             }
 
             private fun showPopup(

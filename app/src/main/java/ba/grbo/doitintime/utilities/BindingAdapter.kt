@@ -1,17 +1,12 @@
 package ba.grbo.doitintime.utilities
 
-import android.content.Context
-import androidx.annotation.StringRes
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
 import androidx.recyclerview.widget.RecyclerView
 import ba.grbo.doitintime.R
-import ba.grbo.doitintime.data.Priority
-import ba.grbo.doitintime.data.Status
-import ba.grbo.doitintime.data.ToDo
+import ba.grbo.doitintime.data.*
 import ba.grbo.doitintime.ui.adapters.ToDoAdapter
-import com.google.android.material.textfield.TextInputLayout
 
 @BindingAdapter("toDo")
 fun RecyclerView.bindToDo(toDo: ToDo?) {
@@ -24,38 +19,19 @@ fun RecyclerView.bindAdapter(adapter: ToDoAdapter?) {
     adapter?.let { this.adapter = it }
 }
 
-@BindingAdapter("warningMessage", "context", requireAll = true)
-fun TextInputLayout.bindErrorMessage(@StringRes warningMessage: Int?, context: Context) {
-    error = if (warningMessage != null) context.getString(warningMessage) else null
-}
-
 @BindingAdapter("priorityImage")
 fun CustomImageButton.bindPriorityImage(priority: Priority?) {
     priority?.let {
-        if (tag != it.name) {
-            setImageResource(
-                when (it) {
-                    Priority.High -> R.drawable.ic_priority_high
-                    Priority.Normal -> R.drawable.ic_priority_normal
-                    Priority.Low -> R.drawable.ic_priority_low
-                }
-            )
+        if (tag != it) {
+            setImageResource(Priority.getDrawables(it))
             executed = true
-            tag = it.name
-        } else if (tag == it.name) {
-            setImageResource(
-                when (it) {
-                    Priority.High -> R.drawable.ic_priority_high
-                    Priority.Normal -> R.drawable.ic_priority_normal
-                    Priority.Low -> R.drawable.ic_priority_low
-                }
-            )
-        }
+            tag = it
+        } else if (tag == it) setImageResource(Priority.getDrawables(it))
     }
 }
 
 @InverseBindingAdapter(attribute = "priorityImage")
-fun CustomImageButton.getPriority() = Priority.valueOf(tag.toString())
+fun CustomImageButton.getPriority(): Priority = tag as Priority
 
 @BindingAdapter("priorityImageAttrChanged")
 fun CustomImageButton.setPriorityTagListener(attrChange: InverseBindingListener) {
@@ -65,30 +41,16 @@ fun CustomImageButton.setPriorityTagListener(attrChange: InverseBindingListener)
 @BindingAdapter("statusImage")
 fun CustomImageButton.bindStatusImage(status: Status?) {
     status?.let {
-        if (tag != it.identifier) {
-            setImageResource(
-                when (it) {
-                    Status.Active -> R.drawable.ic_status_active
-                    Status.Completed -> R.drawable.ic_status_completed
-                    Status.OnHold -> R.drawable.ic_status_on_hold
-                }
-            )
+        if (tag != it) {
+            setImageResource(Status.getDrawables(it))
             executed = true
-            tag = it.identifier
-        } else if (tag == it.identifier) {
-            setImageResource(
-                when (it) {
-                    Status.Active -> R.drawable.ic_status_active
-                    Status.Completed -> R.drawable.ic_status_completed
-                    Status.OnHold -> R.drawable.ic_status_on_hold
-                }
-            )
-        }
+            tag = it
+        } else if (tag == it) setImageResource(Status.getDrawables(it))
     }
 }
 
 @InverseBindingAdapter(attribute = "statusImage")
-fun CustomImageButton.getStatus() = Status.valueOf(identifier = tag.toString())
+fun CustomImageButton.getStatus(): Status = tag as Status
 
 @BindingAdapter("statusImageAttrChanged")
 fun CustomImageButton.setStatusTagListener(attrChange: InverseBindingListener) {
@@ -113,5 +75,45 @@ fun CustomImageButton.getState(): Boolean = tag as Boolean
 
 @BindingAdapter("expandImageAttrChanged")
 fun CustomImageButton.setStateTagListener(attrChange: InverseBindingListener) {
+    setOnTagChangedListener { attrChange.onChange() }
+}
+
+@BindingAdapter("checkedTasksSortingTypeRadioButton")
+fun CustomRadioGroup.bindCheckedTasksSortingTypeRadioButton(tasksSortingType: TasksSortingType?) {
+    tasksSortingType?.let {
+        if (tag != it) {
+            check(TasksSortingType.getCheckedRadioButtonId(it))
+            executed = true
+            tag = it
+        } else if (tag == it) check(TasksSortingType.getCheckedRadioButtonId(it))
+    }
+}
+
+@InverseBindingAdapter(attribute = "checkedTasksSortingTypeRadioButton")
+fun CustomRadioGroup.getTasksSortingType(): TasksSortingType = tag as TasksSortingType
+
+@BindingAdapter("checkedTasksSortingTypeRadioButtonAttrChanged")
+fun CustomRadioGroup.setTasksSortingTypeTagListener(attrChange: InverseBindingListener) {
+    setOnTagChangedListener { attrChange.onChange() }
+}
+
+@BindingAdapter("checkedTasksSortingOrderRadioButton")
+fun CustomRadioGroup.bindCheckedTasksSortingOrderRadioButton(
+    tasksSortingOrder: TasksSortingOrder?
+) {
+    tasksSortingOrder?.let {
+        if (tag != it) {
+            check(TasksSortingOrder.getCheckedRadioButtonId(it))
+            executed = true
+            tag = it
+        } else if (tag == it) check(TasksSortingOrder.getCheckedRadioButtonId(it))
+    }
+}
+
+@InverseBindingAdapter(attribute = "checkedTasksSortingOrderRadioButton")
+fun CustomRadioGroup.getTasksSortingOrder(): TasksSortingOrder = tag as TasksSortingOrder
+
+@BindingAdapter("checkedTasksSortingOrderRadioButtonAttrChanged")
+fun CustomRadioGroup.setTasksSortingOrderTagListener(attrChange: InverseBindingListener) {
     setOnTagChangedListener { attrChange.onChange() }
 }

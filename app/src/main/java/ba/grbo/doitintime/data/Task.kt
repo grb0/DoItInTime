@@ -20,14 +20,14 @@ data class Task(
     val id: Int,
     val infoId: Int,
     val description: String,
-    val priority: Priority = Priority.Normal,
-    val status: Status = Status.Active
+    val priority: Priority = Priority.NORMAL,
+    val status: Status = Status.ACTIVE
 ) {
     constructor(
         infoId: Int,
         description: String,
-        priority: Priority = Priority.Normal,
-        status: Status = Status.Active
+        priority: Priority = Priority.NORMAL,
+        status: Status = Status.ACTIVE
     ) : this(
         0,
         infoId,

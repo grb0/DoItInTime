@@ -7,10 +7,12 @@ import ba.grbo.doitintime.data.Status
 object Converter {
     @InverseMethod("stringToPriority")
     @JvmStatic
-    fun priorityToString(priority: Priority?): String? = priority?.name
+    fun priorityToString(priority: Priority?): String? = priority?.identifier
 
     @JvmStatic
-    fun stringToPriority(priority: String?): Priority? = priority?.let { Priority.valueOf(it) }
+    fun stringToPriority(priority: String?): Priority? = priority?.let {
+        Priority.valueOf(identifier = it)
+    }
 
     @InverseMethod("stringToStatus")
     @JvmStatic

@@ -2,22 +2,20 @@ package ba.grbo.doitintime.data.source.local
 
 import androidx.lifecycle.MutableLiveData
 import androidx.room.TypeConverter
-import ba.grbo.doitintime.data.Priority
-import ba.grbo.doitintime.data.Status
-
+import ba.grbo.doitintime.data.*
 
 class Converter {
     @TypeConverter
-    fun mLDTitleToString(title: MutableLiveData<String>) = title.value
+    fun mldToString(title: MutableLiveData<String>) = title.value
 
     @TypeConverter
-    fun stringToMLDTitle(title: String) = MutableLiveData(title)
+    fun stringToMld(title: String) = MutableLiveData(title)
 
     @TypeConverter
-    fun mLDPriorityToPriority(priority: MutableLiveData<Priority>) = priority.value
+    fun mldToPriority(priority: MutableLiveData<Priority>) = priority.value
 
     @TypeConverter
-    fun priorityToMLDPriority(priority: Priority) = MutableLiveData(priority)
+    fun priorityToMld(priority: Priority) = MutableLiveData(priority)
 
     @TypeConverter
     fun priorityToString(priority: Priority) = priority.name
@@ -26,14 +24,34 @@ class Converter {
     fun stringToPriority(priority: String) = Priority.valueOf(priority)
 
     @TypeConverter
-    fun mLDStatusToStatus(status: MutableLiveData<Status>) = status.value
+    fun mldToStatus(status: MutableLiveData<Status>) = status.value
 
     @TypeConverter
-    fun statusToMLDStatus(status: Status) = MutableLiveData(status)
+    fun statusToMld(status: Status) = MutableLiveData(status)
 
     @TypeConverter
     fun statusToString(status: Status) = status.name
 
     @TypeConverter
-    fun stringToStatus(status: String) = Status.valueOf(identifier = status)
+    fun stringToStatus(status: String) = Status.valueOf(status)
+
+    @TypeConverter
+    fun mldToTasksSorting(tasksSorting: MutableLiveData<TasksSorting>) =
+        tasksSorting.value
+
+    @TypeConverter
+    fun tasksSortingToMld(tasksSorting: TasksSorting) = MutableLiveData(tasksSorting)
+
+    @TypeConverter
+    fun tasksSortingToString(tasksSorting: TasksSorting) =
+        "${tasksSorting.type.value?.name}|${tasksSorting.order.value?.name}"
+
+    @TypeConverter
+    fun stringToTasksSorting(tasksSorting: String): TasksSorting {
+        val (type, order) = tasksSorting.split('|')
+        return TasksSorting(
+            MutableLiveData(TasksSortingType.valueOf(type)),
+            MutableLiveData(TasksSortingOrder.valueOf(order))
+        )
+    }
 }

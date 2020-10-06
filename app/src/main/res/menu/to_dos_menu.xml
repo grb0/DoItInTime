@@ -25,9 +25,9 @@
                 <menu>
                     <item
                         android:id="@+id/show_active"
-                        android:icon="@drawable/ic_status_active"
                         android:checkable="true"
                         android:checked="true"
+                        android:icon="@drawable/ic_status_active"
                         android:title="@string/active" />
 
                     <item
@@ -113,6 +113,14 @@
                         </menu>
                     </item>
                 </menu>
+            </item>
+
+            <item
+                android:id="@+id/theme"
+                android:checkable="true"
+                android:icon="@drawable/ic_moon"
+                android:title="@string/dark_theme">
+
             </item>
 
             <item

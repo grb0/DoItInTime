@@ -10,8 +10,9 @@ data class Info(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     val title: MutableLiveData<String>,
-    val priority: MutableLiveData<Priority> = MutableLiveData(Priority.Normal),
-    val status: MutableLiveData<Status> = MutableLiveData(Status.Active),
+    val priority: MutableLiveData<Priority> = MutableLiveData(Priority.NORMAL),
+    val status: MutableLiveData<Status> = MutableLiveData(Status.ACTIVE),
+    val tasksSorting: MutableLiveData<TasksSorting> = MutableLiveData(TasksSorting())
 ) {
     @Ignore
     var expanded = MutableLiveData(false)
@@ -21,8 +22,8 @@ data class Info(
 
     constructor(
         title: MutableLiveData<String>,
-        priority: MutableLiveData<Priority> = MutableLiveData(Priority.Normal),
-        status: MutableLiveData<Status> = MutableLiveData(Status.Active)
+        priority: MutableLiveData<Priority> = MutableLiveData(Priority.NORMAL),
+        status: MutableLiveData<Status> = MutableLiveData(Status.ACTIVE)
     ) : this(
         0,
         title,

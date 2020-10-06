@@ -56,11 +56,11 @@ class ToDosFragment : Fragment() {
 
     private object onQueryTextListener : SearchView.OnQueryTextListener {
         override fun onQueryTextSubmit(query: String?): Boolean {
-            TODO("Not yet implemented")
+            return true
         }
 
         override fun onQueryTextChange(newText: String?): Boolean {
-            TODO("Not yet implemented")
+            return true
         }
     }
 
@@ -92,7 +92,7 @@ class ToDosFragment : Fragment() {
 //        toDosCount.observe(viewLifecycleOwner) {
 //            Snackbar.make(
 //                binding.toDosCoordinatorLayout,
-//                "Todo successfully added",
+//                "To-do successfully added",
 //                Snackbar.LENGTH_LONG
 //            ).show()
 //        }

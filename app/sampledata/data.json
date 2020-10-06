@@ -10,7 +10,7 @@
   ],
   "tasks": [
     {
-      "description": "Study Android Programming and visit mum",
+      "description": "Study Android Development and visit mum",
       "priority": "@drawable/ic_priority_high",
       "status": "@drawable/ic_status_active"
     },
