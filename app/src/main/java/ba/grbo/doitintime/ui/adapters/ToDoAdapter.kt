@@ -74,10 +74,10 @@ class ToDoAdapter @Inject constructor(
                         showKeyboard,
                         hideKeyboard,
                         context,
+                        priorityDropdownMenuLayout,
+                        statusDropdownMenuLayout,
                         priorityDropdownMenu,
                         statusDropdownMenu,
-                        priorityLayout,
-                        statusLayout,
                         sortLinearLayout,
                         sortHint,
                         sortTypeRadioGroup,
@@ -104,10 +104,10 @@ class ToDoAdapter @Inject constructor(
                 showKeyboard: (View) -> Unit,
                 hideKeyboard: (View) -> Unit,
                 context: Context,
+                priorityDropdownMenuLayout: TextInputLayout,
+                statusDropdownMenuLayout: TextInputLayout,
                 priorityDropdownMenu: AutoCompleteTextView,
                 statusDropdownMenu: AutoCompleteTextView,
-                priorityLayout: TextInputLayout,
-                statusLayout: TextInputLayout,
                 sortLinearLayout: LinearLayout,
                 sortHint: TextView,
                 sortTypeRadioGroup: CustomRadioGroup,
@@ -134,16 +134,24 @@ class ToDoAdapter @Inject constructor(
                     titleEditText,
                     context
                 )
+                setupDropdownMenuLayouts(
+                    priorityDropdownMenuLayout,
+                    statusDropdownMenuLayout
+                )
                 setupDropdownMenus(
                     priorityDropdownMenu,
                     statusDropdownMenu,
-                    priorityLayout,
-                    statusLayout,
+                    priorityDropdownMenuLayout,
+                    statusDropdownMenuLayout,
+                    infoCard,
+                    setOnReleaseFocusListener,
                     context
                 )
                 setupSortLinearLayout(
                     sortLinearLayout,
                     sortHint,
+                    infoCard,
+                    setOnReleaseFocusListener,
                     context
                 )
                 setupSortRadioGroups(
@@ -167,29 +175,30 @@ class ToDoAdapter @Inject constructor(
             }
 
             private fun setupTitleEditText(
-                editText: CustomEditText,
+                titleEditText: CustomEditText,
                 infoCard: MaterialCardView,
                 showKeyboard: (View) -> Unit,
                 hideKeyboard: (View) -> Unit,
                 setOnReleaseFocusListener: (((ev: MotionEvent) -> Unit)?) -> Unit
             ) {
-                editText.setOnFocusChangeListener { view, hasFocus ->
-                    view as CustomEditText
-                    if (hasFocus) {
-                        showKeyboard(view)
-                        setOnReleaseFocusListener {
-                            val touchPoint = Point(it.rawX.roundToInt(), it.rawY.roundToInt())
-                            val infoCardTouched = isPointInsideViewBounds(
-                                infoCard,
-                                touchPoint
-                            )
-                            if (!infoCardTouched) view.clearFocus()
-                        }
-                    } else if (!hasFocus) {
-                        hideKeyboard(view)
-                        view.run {
-                            if (text.toString().isEmpty()) setText(originalText)
-                            else setText(removeExcessiveSpace(text.toString()))
+                titleEditText.run {
+                    setOnFocusChangeListener { _, hasFocus ->
+                        if (hasFocus) {
+                            showKeyboard(this)
+                            setOnReleaseFocusListener {
+                                getOnReleaseFocusListener(
+                                    infoCard,
+                                    it,
+                                    ::clearFocus
+                                )
+                            }
+                        } else if (!hasFocus) {
+                            hideKeyboard(this)
+                            if (text.toString().isEmpty() && originalText.isNotEmpty()) {
+                                setText(originalText)
+                            } else if (text.toString().isNotEmpty()) {
+                                setText(removeExcessiveSpace(text.toString()))
+                            }
                             setOnReleaseFocusListener(null) // Releasing listener when leaving view
                         }
                     }
@@ -211,46 +220,74 @@ class ToDoAdapter @Inject constructor(
             private fun setupDropdownMenus(
                 priorityDropdownMenu: AutoCompleteTextView,
                 statusDropdownMenu: AutoCompleteTextView,
-                priorityLayout: TextInputLayout,
-                statusLayout: TextInputLayout,
+                priorityDropdownMenuLayout: TextInputLayout,
+                statusDropdownMenuLayout: TextInputLayout,
+                infoCard: MaterialCardView,
+                setOnReleaseFocusListener: (((ev: MotionEvent) -> Unit)?) -> Unit,
                 context: Context
             ) {
                 setupPriorityDropdownMenu(
                     priorityDropdownMenu,
-                    priorityLayout,
+                    priorityDropdownMenuLayout,
+                    infoCard,
+                    setOnReleaseFocusListener,
                     context
                 )
                 setupStatusDropdownMenu(
                     statusDropdownMenu,
-                    statusLayout,
+                    statusDropdownMenuLayout,
+                    infoCard,
+                    setOnReleaseFocusListener,
                     context
                 )
             }
 
+            private fun setupDropdownMenuLayouts(
+                priorityDropdownMenuLayout: TextInputLayout,
+                statusDropdownMenuLayout: TextInputLayout,
+            ) {
+                setupDropdownMenuLayout(priorityDropdownMenuLayout)
+                setupDropdownMenuLayout(statusDropdownMenuLayout)
+            }
+
+            private fun setupDropdownMenuLayout(
+                dropdownMenuLayout: TextInputLayout,
+            ) {
+                dropdownMenuLayout.setStartIconTintMode(PorterDuff.Mode.DST)
+            }
+
             private fun setupPriorityDropdownMenu(
                 priorityDropdownMenu: AutoCompleteTextView,
-                priorityLayout: TextInputLayout,
+                priorityDropdownMenuLayout: TextInputLayout,
+                infoCard: MaterialCardView,
+                setOnReleaseFocusListener: (((ev: MotionEvent) -> Unit)?) -> Unit,
                 context: Context
             ) {
                 setupDropdownMenu(
                     Priority.priorities,
                     Priority::getDrawables,
                     priorityDropdownMenu,
-                    priorityLayout,
+                    priorityDropdownMenuLayout,
+                    infoCard,
+                    setOnReleaseFocusListener,
                     context
                 )
             }
 
             private fun setupStatusDropdownMenu(
                 statusDropdownMenu: AutoCompleteTextView,
-                statusLayout: TextInputLayout,
+                statusDropdownMenuLayout: TextInputLayout,
+                infoCard: MaterialCardView,
+                setOnReleaseFocusListener: (((ev: MotionEvent) -> Unit)?) -> Unit,
                 context: Context
             ) {
                 setupDropdownMenu(
                     Status.statuses,
                     Status::getDrawables,
                     statusDropdownMenu,
-                    statusLayout,
+                    statusDropdownMenuLayout,
+                    infoCard,
+                    setOnReleaseFocusListener,
                     context
                 )
             }
@@ -259,7 +296,9 @@ class ToDoAdapter @Inject constructor(
                 contents: List<String>,
                 drawables: (String) -> Int,
                 dropdownMenu: AutoCompleteTextView,
-                layout: TextInputLayout,
+                dropdownMenuLayout: TextInputLayout,
+                infoCard: MaterialCardView,
+                setOnReleaseFocusListener: (((ev: MotionEvent) -> Unit)?) -> Unit,
                 context: Context
             ) {
                 val contentAdapter = MaterialSpinnerAdapter(
@@ -269,23 +308,42 @@ class ToDoAdapter @Inject constructor(
                 )
 
                 dropdownMenu.setAdapter(contentAdapter)
+                dropdownMenu.setOnFocusChangeListener { _, hasFocus ->
+                    setOnReleaseFocusListener(if (hasFocus) { event ->
+                        setOnReleaseFocusListener {
+                            getOnReleaseFocusListener(
+                                infoCard,
+                                event,
+                                dropdownMenu::clearFocus
+                            )
+                        }
+                    } else null)
+                }
                 dropdownMenu.doOnTextChanged { content, _, _, _ ->
                     // If device is rotated before any selection is made
                     if (content.toString() == "") return@doOnTextChanged
 
-                    layout.setStartIconTintMode(PorterDuff.Mode.DST)
-                    layout.setStartIconDrawable(drawables(content.toString()))
+                    dropdownMenuLayout.setStartIconDrawable(drawables(content.toString()))
                 }
             }
 
             private fun setupSortLinearLayout(
                 sortLinearLayout: LinearLayout,
                 sortHint: TextView,
+                infoCard: MaterialCardView,
+                setOnReleaseFocusListener: (((ev: MotionEvent) -> Unit)?) -> Unit,
                 context: Context
             ) {
                 sortLinearLayout.setOnClickListener { it.requestFocusFromTouch() }
 
                 sortLinearLayout.setOnFocusChangeListener { _, hasFocus ->
+                    setOnReleaseFocusListener(if (hasFocus) { event ->
+                        getOnReleaseFocusListener(
+                            infoCard,
+                            event,
+                            sortLinearLayout::clearFocus
+                        )
+                    } else null)
                     sortHint.setTextColor(
                         ContextCompat.getColor(
                             context,
@@ -414,6 +472,19 @@ class ToDoAdapter @Inject constructor(
                 sortRadioButton.setOnClickListener {
                     sortLinearLayout.requestFocusFromTouch()
                 }
+            }
+
+            private fun getOnReleaseFocusListener(
+                view: View,
+                event: MotionEvent,
+                action: () -> Unit
+            ) {
+                val touchPoint = Point(event.rawX.roundToInt(), event.rawY.roundToInt())
+                val viewTouched = isPointInsideViewBounds(
+                    view,
+                    touchPoint
+                )
+                if (!viewTouched) action()
             }
 
             private fun isPointInsideViewBounds(view: View, point: Point): Boolean = Rect().run {
