@@ -9,7 +9,10 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AutoCompleteTextView
+import android.widget.LinearLayout
+import android.widget.RadioButton
+import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
@@ -92,7 +95,7 @@ class ToDoAdapter @Inject constructor(
 
             private fun setupViews(
                 infoConstraintLayout: ConstraintLayout,
-                titleEditText: EditText,
+                titleEditText: CustomEditText,
                 priorityButton: CustomImageButton,
                 statusButton: CustomImageButton,
                 expandButton: CustomImageButton,
@@ -128,6 +131,7 @@ class ToDoAdapter @Inject constructor(
                     priorityButton,
                     statusButton,
                     expandButton,
+                    titleEditText,
                     context
                 )
                 setupDropdownMenus(
@@ -163,7 +167,7 @@ class ToDoAdapter @Inject constructor(
             }
 
             private fun setupTitleEditText(
-                editText: EditText,
+                editText: CustomEditText,
                 infoCard: MaterialCardView,
                 showKeyboard: (View) -> Unit,
                 hideKeyboard: (View) -> Unit,
@@ -181,8 +185,7 @@ class ToDoAdapter @Inject constructor(
                             )
                             if (!infoCardTouched) view.clearFocus()
                         }
-                    }
-                    if (!hasFocus) {
+                    } else if (!hasFocus) {
                         hideKeyboard(view)
                         view.run {
                             if (text.toString().isEmpty()) setText(originalText)
@@ -197,11 +200,12 @@ class ToDoAdapter @Inject constructor(
                 priorityButton: CustomImageButton,
                 statusButton: CustomImageButton,
                 expandButton: CustomImageButton,
+                titleEditText: CustomEditText,
                 context: Context
             ) {
                 setupPriorityCustomButton(priorityButton, context)
                 setupStatusCustomButton(statusButton, context)
-                setupExpandButton(expandButton)
+                setupExpandButton(expandButton, titleEditText)
             }
 
             private fun setupDropdownMenus(
@@ -351,12 +355,20 @@ class ToDoAdapter @Inject constructor(
                 )
             }
 
-            private fun setupExpandButton(expandButton: CustomImageButton) {
+            private fun setupExpandButton(
+                expandButton: CustomImageButton,
+                titleEditText: CustomEditText
+            ) {
                 expandButton.setOnClickListener {
                     expandButton.setImageResource(
                         if (expandButton.imgResource.isExpanded) R.drawable.ic_expand
                         else R.drawable.ic_collapse
                     )
+
+                    // Fixing wierd bug
+                    val params = titleEditText.layoutParams
+                    params.height = ViewGroup.LayoutParams.WRAP_CONTENT
+                    titleEditText.layoutParams = params
                 }
             }
 
