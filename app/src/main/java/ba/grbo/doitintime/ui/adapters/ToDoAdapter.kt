@@ -307,23 +307,24 @@ class ToDoAdapter @Inject constructor(
                     contents
                 )
 
-                dropdownMenu.setAdapter(contentAdapter)
-                dropdownMenu.setOnFocusChangeListener { _, hasFocus ->
-                    setOnReleaseFocusListener(if (hasFocus) { event ->
-                        setOnReleaseFocusListener {
+                dropdownMenu.run {
+                    setAdapter(contentAdapter)
+                    setOnFocusChangeListener { _, hasFocus ->
+                        setOnReleaseFocusListener(if (hasFocus) { event ->
                             getOnReleaseFocusListener(
                                 infoCard,
                                 event,
-                                dropdownMenu::clearFocus
+                                ::clearFocus
                             )
-                        }
-                    } else null)
-                }
-                dropdownMenu.doOnTextChanged { content, _, _, _ ->
-                    // If device is rotated before any selection is made
-                    if (content.toString() == "") return@doOnTextChanged
+                        } else null)
+                        dropdownMenuLayout.setEndIconActivated(hasFocus)
+                    }
+                    doOnTextChanged { content, _, _, _ ->
+                        // If device is rotated before any selection is made
+                        if (content.toString() == "") return@doOnTextChanged
 
-                    dropdownMenuLayout.setStartIconDrawable(drawables(content.toString()))
+                        dropdownMenuLayout.setStartIconDrawable(drawables(content.toString()))
+                    }
                 }
             }
 
