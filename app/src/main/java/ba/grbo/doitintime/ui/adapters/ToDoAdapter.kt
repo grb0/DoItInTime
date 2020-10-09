@@ -171,7 +171,9 @@ class ToDoAdapter @Inject constructor(
             }
 
             private fun setupInfoConstraintLayout(layout: ConstraintLayout) {
-                layout.setOnClickListener { it.requestFocusFromTouch() }
+                layout.setOnFocusChangeListener { _, hasFocus ->
+                    if (hasFocus) layout.callOnClick()
+                }
             }
 
             private fun setupTitleEditText(
@@ -182,7 +184,7 @@ class ToDoAdapter @Inject constructor(
                 setOnReleaseFocusListener: (((ev: MotionEvent) -> Unit)?) -> Unit
             ) {
                 titleEditText.run {
-                    setOnFocusChangeListener { _, hasFocus ->
+                    actionUponFocusChanged = { hasFocus ->
                         if (hasFocus) {
                             showKeyboard(this)
                             setOnReleaseFocusListener {
@@ -335,8 +337,6 @@ class ToDoAdapter @Inject constructor(
                 setOnReleaseFocusListener: (((ev: MotionEvent) -> Unit)?) -> Unit,
                 context: Context
             ) {
-                sortLinearLayout.setOnClickListener { it.requestFocusFromTouch() }
-
                 sortLinearLayout.setOnFocusChangeListener { _, hasFocus ->
                     setOnReleaseFocusListener(if (hasFocus) { event ->
                         getOnReleaseFocusListener(
@@ -351,6 +351,7 @@ class ToDoAdapter @Inject constructor(
                             if (hasFocus) R.color.colorPrimary else R.color.radio_group_frame_text
                         )
                     )
+                    if (hasFocus) sortLinearLayout.callOnClick()
                 }
             }
 

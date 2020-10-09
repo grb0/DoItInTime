@@ -44,7 +44,9 @@
             android:id="@+id/info_constraint_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:focusableInTouchMode="true">
+            android:focusableInTouchMode="true"
+            android:soundEffectsEnabled="false"
+            app:restoreFocus="@={info.focusedView}">
 
             <ba.grbo.doitintime.utilities.CustomImageButton
                 android:id="@+id/expand_button"
@@ -107,13 +109,14 @@
                 android:gravity="start|top"
                 android:hint="@string/enter_to_do_title"
                 android:importantForAutofill="no"
-                android:inputType="textMultiLine"
+                android:inputType="textNoSuggestions|textMultiLine"
                 android:maxLength="100"
                 android:paddingStart="9dp"
                 android:paddingTop="6dp"
                 android:paddingEnd="9dp"
                 android:paddingBottom="6dp"
                 android:selectAllOnFocus="true"
+                android:soundEffectsEnabled="false"
                 android:text="@={info.title}"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -121,9 +124,10 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0"
+                app:restoreFocus="@={info.focusedView}"
                 tools:text="@sample/data.json/title_info/title_hint" />
 
-            <com.google.android.material.textfield.TextInputLayout
+            <ba.grbo.doitintime.utilities.CustomTextInputLayout
                 android:id="@+id/priority_dropdown_menu_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="0dp"
@@ -136,6 +140,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/title_edit_text"
                 app:layout_constraintTop_toBottomOf="@+id/title_edit_text"
+                app:restoreFocus="@={info.focusedView}"
                 app:startIconContentDescription="@string/important_sign"
                 app:startIconDrawable="@drawable/ic_priority_generic"
                 tools:hint=""
@@ -150,11 +155,12 @@
                     android:inputType="@{InputType.TYPE_NULL}"
                     android:text="@={Converter.priorityToString(info.priority)}"
                     android:textSize="16sp"
+                    app:restoreFocus="@={info.focusedView}"
                     tools:text="@sample/data.json/title_info/priority_text" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+            </ba.grbo.doitintime.utilities.CustomTextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
+            <ba.grbo.doitintime.utilities.CustomTextInputLayout
                 android:id="@+id/status_dropdown_menu_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="0dp"
@@ -169,6 +175,7 @@
                 app:layout_constraintStart_toStartOf="@+id/title_edit_text"
                 app:layout_constraintTop_toBottomOf="@+id/priority_dropdown_menu_layout"
                 app:layout_constraintVertical_bias="0.0"
+                app:restoreFocus="@={info.focusedView}"
                 app:startIconContentDescription="@string/circle"
                 app:startIconDrawable="@drawable/ic_status_generic"
                 tools:hint=""
@@ -183,9 +190,10 @@
                     android:inputType="@{InputType.TYPE_NULL}"
                     android:text="@={Converter.statusToString(info.status)}"
                     android:textSize="16sp"
+                    app:restoreFocus="@={info.focusedView}"
                     tools:text="@sample/data.json/title_info/status_text" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+            </ba.grbo.doitintime.utilities.CustomTextInputLayout>
 
             <RelativeLayout
                 android:id="@+id/sort_relative_layout"
@@ -207,7 +215,9 @@
                     android:layout_marginTop="15dp"
                     android:background="@drawable/radio_group_frame"
                     android:focusableInTouchMode="true"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:soundEffectsEnabled="false"
+                    app:restoreFocus="@={info.focusedView}">
 
                     <ba.grbo.doitintime.utilities.CustomRadioGroup
                         android:id="@+id/sort_type_radio_group"

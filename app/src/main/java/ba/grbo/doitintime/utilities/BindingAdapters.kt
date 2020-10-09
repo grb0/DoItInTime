@@ -1,11 +1,17 @@
 package ba.grbo.doitintime.utilities
 
+import android.view.View
+import android.widget.AutoCompleteTextView
+import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.doOnAttach
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
 import androidx.recyclerview.widget.RecyclerView
 import ba.grbo.doitintime.data.*
 import ba.grbo.doitintime.ui.adapters.ToDoAdapter
+import com.google.android.material.textfield.TextInputLayout
 
 @BindingAdapter("toDo")
 fun RecyclerView.bindToDo(toDo: ToDo?) {
@@ -85,4 +91,61 @@ fun CustomRadioGroup.getTasksSortingOrder(): TasksSortingOrder =
 @BindingAdapter("checkedTasksSortingOrderRadioButtonAttrChanged")
 fun CustomRadioGroup.setTasksSortingOrderTagListener(attrChange: InverseBindingListener) {
     setOnCheckedIdChangedListener { attrChange.onChange() }
+}
+
+@BindingAdapter("restoreFocus")
+fun View.bindRestoreFocus(focusedView: Triple<Int, Any?, Any?>?) {
+    focusedView?.let {
+        if (id == focusedView.first && this is TextInputLayout) {
+            (editText as AutoCompleteTextView).run {
+                if (!hasFocus()) {
+                    requestFocusFromTouch()
+                    if (!(focusedView.second as Boolean)) doOnAttach { dismissDropDown() }
+                }
+            }
+        } else if (id == focusedView.first && !hasFocus()) {
+            when (this) {
+                is ConstraintLayout -> callOnClick()
+                is CustomEditText -> {
+                    post {
+                        restoreSelection(focusedView.second as Int, focusedView.third as Int)
+                        setSelectAllOnFocus(false)
+                        requestFocusFromTouch()
+                        setSelectAllOnFocus(true)
+                    }
+                }
+                is AutoCompleteTextView -> {
+                    requestFocusFromTouch()
+                    if (!(focusedView.second as Boolean)) doOnAttach { this.dismissDropDown() }
+                }
+                is LinearLayout -> requestFocusFromTouch()
+                else -> throw IllegalArgumentException("Unknown view: ${javaClass.name}")
+            }
+        }
+    }
+}
+
+@InverseBindingAdapter(attribute = "restoreFocus")
+fun View.setRestoreFocusedView(): Triple<Int, Any?, Any?> = when (this) {
+    is ConstraintLayout -> Triple(id, null, null)
+    is CustomEditText -> Triple(id, selectionStart, selectionEnd)
+    is AutoCompleteTextView -> Triple(id, isPopupShowing, null)
+    is TextInputLayout -> Triple(id, (editText as AutoCompleteTextView).isPopupShowing, null)
+    is LinearLayout -> Triple(id, null, null)
+    else -> throw IllegalArgumentException("Unknown view: ${javaClass.name}")
+}
+
+@BindingAdapter("restoreFocusAttrChanged")
+fun View.setOnRestoreFocusedViewChangeListener(attrChange: InverseBindingListener) {
+    when (this) {
+        is ConstraintLayout -> setOnClickListener { attrChange.onChange() }
+        is CustomEditText -> {
+            actionUponSelectionChanged = { attrChange.onChange() }
+            setOnFocusChangeListener { _, hasFocus -> if (hasFocus) { attrChange.onChange() } }
+        }
+        is AutoCompleteTextView -> setOnClickListener { attrChange.onChange() }
+        is CustomTextInputLayout -> setCustomEndIconOnClickListener { attrChange.onChange() }
+        is LinearLayout -> setOnClickListener { attrChange.onChange() }
+        else -> throw IllegalArgumentException("Unknown view: ${javaClass.name}")
+    }
 }

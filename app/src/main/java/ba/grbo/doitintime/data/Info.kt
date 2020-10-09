@@ -18,7 +18,7 @@ data class Info(
     var expanded = MutableLiveData(false)
 
     @Ignore
-    var focusedView = MutableLiveData<String>()
+    var focusedView = MutableLiveData<Triple<Int, Any?, Any?>>()
 
     constructor(
         title: MutableLiveData<String>,
