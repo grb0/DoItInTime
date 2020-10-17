@@ -18,28 +18,29 @@ data class Info(
     var expanded = MutableLiveData(false)
 
     @Ignore
-    var focusedView = MutableLiveData<Triple<Int, Any?, Any?>>()
+    var focusedView = MutableLiveData<Triple<Int, Any?, Int?>>()
 
     constructor(
         title: MutableLiveData<String>,
         priority: MutableLiveData<Priority> = MutableLiveData(Priority.NORMAL),
-        status: MutableLiveData<Status> = MutableLiveData(Status.ACTIVE)
+        status: MutableLiveData<Status> = MutableLiveData(Status.ACTIVE),
+        tasksSorting: MutableLiveData<TasksSorting> = MutableLiveData(TasksSorting())
     ) : this(
         0,
         title,
         priority,
-        status
+        status,
+        tasksSorting
     )
 
-    override fun equals(other: Any?): Boolean {
-        return when (other) {
-            null,
-            !is Info -> false
-            else -> id == other.id &&
-                    title.value == other.title.value &&
-                    priority.value.toString() == other.priority.value.toString() &&
-                    status.value.toString() == other.status.value.toString()
-        }
+    override fun equals(other: Any?) = when (other) {
+        null,
+        !is Info -> false
+        else -> id == other.id &&
+                title.value == other.title.value &&
+                priority.value.toString() == other.priority.value.toString() &&
+                status.value.toString() == other.status.value.toString() &&
+                tasksSorting.value == other.tasksSorting.value
     }
 
     override fun hashCode(): Int {
@@ -47,6 +48,7 @@ data class Info(
         result = 31 * result + title.hashCode()
         result = 31 * result + priority.hashCode()
         result = 31 * result + status.hashCode()
+        result = 31 * result + tasksSorting.hashCode()
         return result
     }
 }

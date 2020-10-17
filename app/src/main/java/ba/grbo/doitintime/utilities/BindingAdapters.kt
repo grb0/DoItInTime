@@ -94,7 +94,7 @@ fun CustomRadioGroup.setTasksSortingOrderTagListener(attrChange: InverseBindingL
 }
 
 @BindingAdapter("restoreFocus")
-fun View.bindRestoreFocus(focusedView: Triple<Int, Any?, Any?>?) {
+fun View.bindRestoreFocus(focusedView: Triple<Int, Any?, Int?>?) {
     focusedView?.let {
         if (id == focusedView.first && this is TextInputLayout) {
             (editText as AutoCompleteTextView).run {
@@ -114,6 +114,7 @@ fun View.bindRestoreFocus(focusedView: Triple<Int, Any?, Any?>?) {
                         setSelectAllOnFocus(true)
                     }
                 }
+                is CustomImageButton -> doOnAttach { callOnClick() }
                 is AutoCompleteTextView -> {
                     requestFocusFromTouch()
                     if (!(focusedView.second as Boolean)) doOnAttach { this.dismissDropDown() }
@@ -126,11 +127,12 @@ fun View.bindRestoreFocus(focusedView: Triple<Int, Any?, Any?>?) {
 }
 
 @InverseBindingAdapter(attribute = "restoreFocus")
-fun View.setRestoreFocusedView(): Triple<Int, Any?, Any?> = when (this) {
-    is ConstraintLayout -> Triple(id, null, null)
+fun View.setRestoreFocusedView(): Triple<Int, Any?, Int?> = when (this) {
     is CustomEditText -> Triple(id, selectionStart, selectionEnd)
     is AutoCompleteTextView -> Triple(id, isPopupShowing, null)
     is TextInputLayout -> Triple(id, (editText as AutoCompleteTextView).isPopupShowing, null)
+    is ConstraintLayout,
+    is CustomImageButton,
     is LinearLayout -> Triple(id, null, null)
     else -> throw IllegalArgumentException("Unknown view: ${javaClass.name}")
 }
@@ -141,9 +143,18 @@ fun View.setOnRestoreFocusedViewChangeListener(attrChange: InverseBindingListene
         is ConstraintLayout -> setOnClickListener { attrChange.onChange() }
         is CustomEditText -> {
             actionUponSelectionChanged = { attrChange.onChange() }
-            setOnFocusChangeListener { _, hasFocus -> if (hasFocus) { attrChange.onChange() } }
+            setOnFocusChangeListener { _, hasFocus -> if (hasFocus) attrChange.onChange() }
         }
-        is AutoCompleteTextView -> setOnClickListener { attrChange.onChange() }
+        is CustomImageButton -> setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) attrChange.onChange()
+        }
+        is AutoCompleteTextView -> {
+            setOnClickListener { attrChange.onChange() }
+            setOnItemClickListener { _, _, _, _ ->
+                dismissDropDown()
+                attrChange.onChange()
+            }
+        }
         is CustomTextInputLayout -> setCustomEndIconOnClickListener { attrChange.onChange() }
         is LinearLayout -> setOnClickListener { attrChange.onChange() }
         else -> throw IllegalArgumentException("Unknown view: ${javaClass.name}")
