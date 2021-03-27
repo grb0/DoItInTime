@@ -566,11 +566,7 @@ class ToDoAdapter @Inject constructor(
             }
         }
 
-        fun bind(
-            info: Info,
-            viewsEnabled: LiveData<Boolean>,
-            warningMessage: LiveData<Int>
-        ) {
+        fun bind(info: Info, viewsEnabled: LiveData<Boolean>, warningMessage: LiveData<Int>) {
             binding.info = info
             binding.viewsEnabled = viewsEnabled
             binding.warningMessage = warningMessage

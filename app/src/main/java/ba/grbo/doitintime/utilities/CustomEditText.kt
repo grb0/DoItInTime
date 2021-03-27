@@ -3,6 +3,7 @@ package ba.grbo.doitintime.utilities
 import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet
+import android.view.View
 import androidx.appcompat.widget.AppCompatEditText
 
 class CustomEditText : AppCompatEditText {
@@ -34,5 +35,9 @@ class CustomEditText : AppCompatEditText {
             if (start != end) setSelection(start, end)
             else setSelection(start)
         }
+    }
+
+    override fun onVisibilityChanged(changedView: View, visibility: Int) {
+        super.onVisibilityChanged(changedView, visibility)
     }
 }
