@@ -1,8 +1,12 @@
-# DoItInTime
+# A to-do app
 
-Unfinished app, practicing two-way data binding.
-Was lazy when it came to naming commits, not a good practice to follow at all.
+An unfinished to-do app meant for practicing two-way data binding done using the MVVM architectural pattern.
 
-![Change priority](https://i.postimg.cc/PJZNQ0N7/01.png)
-![Change sorting](https://i.postimg.cc/yNddbDkc/02.png)
-![Options](https://i.postimg.cc/h4xG6WPy/03.png)
+Some screenshots:
+
+![1](./screenshots/1.png)
+![2](./screenshots/2.png)
+![3](./screenshots/3.png)
+![4](./screenshots/4.png)
+![5](./screenshots/5.png)
+![6](./screenshots/6.png)
